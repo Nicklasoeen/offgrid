@@ -1,0 +1,29 @@
+:root {
+  color-scheme: light;
+  font-family: Georgia, "Times New Roman", serif;
+  color: #1f2a1f;
+  background: linear-gradient(180deg, #edf3e4 0%, #dfe9d7 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.app-shell {
+  width: min(960px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 4rem 0;
+}
+
+.hero {
+  background: rgba(255, 252, 245, 0.88);
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 18px 40px rgba(31, 42, 31, 0.08);
+}
