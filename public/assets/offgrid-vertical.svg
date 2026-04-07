@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 360" width="300" height="360">
+  <rect width="300" height="360" rx="32" fill="#1b4332"/>
+  <g transform="translate(50,20)">
+    <polygon points="100,18 170,58 170,142 100,182 30,142 30,58" fill="none" stroke="#b7e4c7" stroke-width="2" opacity="0.7"/>
+    <polygon points="100,30 162,64 162,136 100,170 38,136 38,64" fill="none" stroke="#b7e4c7" stroke-width="0.8" opacity="0.3"/>
+    <circle cx="100" cy="62" r="13" fill="none" stroke="#d8f3dc" stroke-width="2"/>
+    <line x1="100" y1="43" x2="100" y2="39" stroke="#d8f3dc" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="100" y1="43" x2="100" y2="39" stroke="#d8f3dc" stroke-width="1.5" stroke-linecap="round" transform="rotate(45 100 62)"/>
+    <line x1="100" y1="43" x2="100" y2="39" stroke="#d8f3dc" stroke-width="1.5" stroke-linecap="round" transform="rotate(90 100 62)"/>
+    <line x1="100" y1="43" x2="100" y2="39" stroke="#d8f3dc" stroke-width="1.5" stroke-linecap="round" transform="rotate(135 100 62)"/>
+    <line x1="100" y1="43" x2="100" y2="39" stroke="#d8f3dc" stroke-width="1.5" stroke-linecap="round" transform="rotate(180 100 62)"/>
+    <line x1="100" y1="43" x2="100" y2="39" stroke="#d8f3dc" stroke-width="1.5" stroke-linecap="round" transform="rotate(225 100 62)"/>
+    <line x1="100" y1="43" x2="100" y2="39" stroke="#d8f3dc" stroke-width="1.5" stroke-linecap="round" transform="rotate(270 100 62)"/>
+    <line x1="100" y1="43" x2="100" y2="39" stroke="#d8f3dc" stroke-width="1.5" stroke-linecap="round" transform="rotate(315 100 62)"/>
+    <path d="M45 138 L72 82 L86 108 L100 72 L114 108 L128 82 L155 138" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M85 138 Q100 128 100 138 Q100 148 115 138" fill="none" stroke="#d8f3dc" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  </g>
+  <text x="150" y="260" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="600" letter-spacing="8">OFFGRID</text>
+  <text x="150" y="290" text-anchor="middle" fill="#ffffff" opacity="0.5" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="400" letter-spacing="4">WANDER · DISCOVER · SHARE</text>
+</svg>
