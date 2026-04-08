@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offgrid | Register</title>
+    <meta
+      name="description"
+      content="Create an Offgrid account and join a social platform for explorers and adventurers."
+    />
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body data-page="register">
+    <div class="auth-shell">
+      <section class="auth-intro">
+        <div class="auth-brand">
+          <img
+            class="brand-logo brand-logo-large"
+            src="/assets/offgrid-icon.png"
+            alt="Offgrid logo"
+          />
+          <p class="eyebrow">Offgrid</p>
+        </div>
+        <h1>Create your account</h1>
+        <p class="intro">
+          Join a community built for hikes, expeditions, camp life, and people
+          who actually enjoy being offline once in a while.
+        </p>
+        <a class="text-link" href="/index.html">Back to feed preview</a>
+      </section>
+
+      <main class="auth-card">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Account</p>
+            <h2>Register</h2>
+          </div>
+        </div>
+
+        <form class="stacked-form" aria-label="Register form">
+          <label>
+            Name
+            <input
+              type="text"
+              name="name"
+              placeholder="Choose a username"
+              required
+            />
+          </label>
+
+          <label>
+            Email
+            <input
+              type="email"
+              name="email"
+              placeholder="name@stud.noroff.no"
+              required
+            />
+          </label>
+
+          <label>
+            Password
+            <input
+              type="password"
+              name="password"
+              placeholder="Create a password"
+              required
+            />
+          </label>
+
+          <label>
+            Avatar URL
+            <input
+              type="url"
+              name="avatar"
+              placeholder="https://example.com/avatar.jpg"
+            />
+          </label>
+
+          <button class="button" type="submit">Create account</button>
+        </form>
+
+        <p class="form-helper">
+          Already registered?
+          <a class="text-link" href="/login.html">Go to login</a>
+        </p>
+      </main>
+    </div>
+  </body>
+</html>

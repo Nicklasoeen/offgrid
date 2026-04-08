@@ -3,22 +3,455 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Offgrid</title>
+    <title>Offgrid | Feed</title>
     <meta
       name="description"
-      content="Offgrid is a social media application for adventurers and explorers."
+      content="Offgrid — a social network for adventurers and explorers."
     />
+    <link rel="icon" href="/assets/offgrid-icon.png" />
     <script type="module" src="/src/js/main.js"></script>
   </head>
-  <body>
-    <div class="app-shell">
-      <header class="hero">
-        <p class="eyebrow">Offgrid</p>
-        <h1>Social Media Network for Adventurers</h1>
-        <p class="intro">Hello world</p>
-      </header>
+  <body data-page="feed">
+    <!-- ── navigation bar ── -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="topbar-left">
+          <a class="brand" href="/index.html" aria-label="Offgrid home">
+            <img class="brand-icon" src="/assets/offgrid-icon.png" alt="" />
+          </a>
+        </div>
 
-      <main></main>
+        <nav class="topbar-nav" aria-label="Main">
+          <a class="nav-item is-active" href="/index.html">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54A1.99 1.99 0 0 0 16 16h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
+              />
+            </svg>
+            <span>Feed</span>
+          </a>
+          <a class="nav-item" href="#">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M3 20h18v-2H3v2zm2.2-4h13.6L16 10h-3V7.6l1.3 1.3 1.4-1.4L12 4 8.3 7.5l1.4 1.4L11 7.6V10H8l-2.8 6z"
+              />
+            </svg>
+            <span>Adventurers</span>
+          </a>
+          <a
+            class="nav-item nav-item-notifications"
+            href="#"
+            aria-label="Notifications"
+          >
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6v-4.8c0-3.15-1.75-5.72-4.75-6.38V4a2.25 2.25 0 1 0-4.5 0v.82C6.75 5.48 5 8.05 5 11.2V16l-2 2v1h18v-1l-2-2z"
+              />
+            </svg>
+            <span>Notifications</span>
+            <span class="notification-badge" aria-hidden="true">2</span>
+          </a>
+          <a class="nav-item" href="/login.html">
+            <img
+              class="avatar-xs avatar-photo"
+              src="/assets/IMG_2851.JPG"
+              alt="Nicklas Oen"
+            />
+            <span>Me</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ── page body — three columns ── -->
+    <div class="page-body">
+      <aside class="sidebar-left">
+        <div class="card profile-card">
+          <div class="profile-cover">
+            <img
+              class="profile-cover-image"
+              src="/assets/rural-explorer-oWS_3i0Y5sI-unsplash.jpg"
+              alt="Rural explorer landscape"
+            />
+          </div>
+          <div class="profile-info">
+            <img
+              class="avatar-lg avatar-photo"
+              src="/assets/IMG_2851.JPG"
+              alt="Nicklas Oen"
+            />
+            <h2 class="profile-name">Nicklas Øen</h2>
+            <p class="profile-headline">Hiker &amp; Outdoor Enthusiast</p>
+            <p class="profile-location">Bergen, Vestland</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- center feed -->
+      <main class="feed-center">
+        <div class="card composer">
+          <div class="composer-row">
+            <img
+              class="avatar-md avatar-photo"
+              src="/assets/IMG_2851.JPG"
+              alt="Nicklas Oen"
+            />
+            <button class="composer-input" type="button">
+              Log your latest adventure...
+            </button>
+          </div>
+          <div class="composer-actions">
+            <button class="composer-btn" type="button">
+              <svg
+                class="icon icon-green"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+                />
+              </svg>
+              Photos
+            </button>
+            <button class="composer-btn" type="button">
+              <svg
+                class="icon icon-blue"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"
+                />
+              </svg>
+              Route
+            </button>
+            <button class="composer-btn" type="button">
+              <svg
+                class="icon icon-orange"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"
+                />
+              </svg>
+              Stats
+            </button>
+          </div>
+        </div>
+
+        <!-- Post 1 -->
+        <article class="card post-card">
+          <div class="post-header">
+            <div class="avatar-md">EK</div>
+            <div class="post-meta">
+              <div class="post-name-row">
+                <a href="#" class="post-author-name">Erik Knutsen</a>
+              </div>
+              <p class="post-headline">Mountain guide · Hardangervidda</p>
+            </div>
+            <button class="btn-follow" type="button" aria-label="Follow">
+              +
+            </button>
+          </div>
+
+          <div class="post-text">
+            <p>
+              Vinden frisknet til over natta og terrenget åpnet seg vidt i
+              dagslys. Dag fire av syv på solotraversen over Hardangervidda.
+              Snøfonnene er knapt synlige nå, og elva begynner å ta seg opp
+              igjen etter vinteren.
+            </p>
+            <p>
+              32 km i dag med 1 840 høydemeter. Telt satt opp ved Sandhaug med
+              utsikt vestover.
+              <a href="#" class="show-more">...more</a>
+            </p>
+          </div>
+
+          <div class="post-media">
+            <div class="media-placeholder cover-alpine">
+              <span class="tag">Alpine</span>
+            </div>
+          </div>
+
+          <div class="post-counts">
+            <span>👍🏔️ 47</span>
+            <span>12 comments</span>
+          </div>
+
+          <div class="post-action-bar">
+            <button class="action-btn" type="button" aria-label="Like">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"
+                />
+              </svg>
+            </button>
+            <button class="action-btn" type="button" aria-label="Comment">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zM17 12V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"
+                />
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- Post 2 -->
+        <article class="card post-card">
+          <div class="post-header">
+            <div class="avatar-md avatar-warm">ML</div>
+            <div class="post-meta">
+              <div class="post-name-row">
+                <a href="#" class="post-author-name">Marte Lindgren</a>
+              </div>
+              <p class="post-headline">Ultra runner · Oslomarka local</p>
+            </div>
+          </div>
+
+          <div class="post-text">
+            <p>
+              Tidlig morgentur i Oslomarka før regnværet slo inn. 18.7 km og 480
+              høydemeter på seks og en halv time. Stien langs Sognsvann var
+              nesten tom — bare meg og en elg som tydeligvis også ville ha
+              morgenkaffe i fred.
+            </p>
+          </div>
+
+          <div class="post-media">
+            <div class="media-placeholder cover-forest">
+              <span class="tag tag-warm">Forest</span>
+            </div>
+          </div>
+
+          <div class="post-counts">
+            <span>👍 19</span>
+            <span>4 comments</span>
+          </div>
+
+          <div class="post-action-bar">
+            <button class="action-btn" type="button" aria-label="Like">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"
+                />
+              </svg>
+            </button>
+            <button class="action-btn" type="button" aria-label="Comment">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zM17 12V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"
+                />
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- Post 3 — text only -->
+        <article class="card post-card">
+          <div class="post-header">
+            <div class="avatar-md avatar-cool">TH</div>
+            <div class="post-meta">
+              <div class="post-name-row">
+                <a href="#" class="post-author-name">Tor Halvorsen</a>
+              </div>
+              <p class="post-headline">Polar explorer · Finnmark</p>
+            </div>
+            <button class="btn-follow" type="button" aria-label="Follow">
+              +
+            </button>
+          </div>
+
+          <div class="post-text">
+            <p>
+              Noen som har tips til gode vintertelt som tåler -30°C? Planlegger
+              en tur på Finnmarksvidda i januar og det forrige teltet ga etter i
+              fjor. Åpent for alle anbefalinger.
+            </p>
+          </div>
+
+          <div class="post-counts">
+            <span>👍 8</span>
+            <span>23 comments</span>
+          </div>
+
+          <div class="post-action-bar">
+            <button class="action-btn" type="button" aria-label="Like">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"
+                />
+              </svg>
+            </button>
+            <button class="action-btn" type="button" aria-label="Comment">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zM17 12V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"
+                />
+              </svg>
+            </button>
+          </div>
+        </article>
+      </main>
+
+      <!-- right sidebar -->
+      <aside class="sidebar-right">
+        <div class="card trails-card">
+          <h3 class="sidebar-heading">Popular trails near you</h3>
+          <p class="trails-subtitle">Bergen &amp; Vestland region</p>
+
+          <!-- stylized mini-map -->
+          <div class="trails-map">
+            <div class="map-topo">
+              <svg viewBox="0 0 300 180" aria-hidden="true" class="topo-lines">
+                <path
+                  d="M0 140 Q60 120 120 130 T240 110 T300 120"
+                  fill="none"
+                  stroke="var(--topo-line)"
+                  stroke-width="1"
+                />
+                <path
+                  d="M0 110 Q80 80 150 100 T260 70 T300 90"
+                  fill="none"
+                  stroke="var(--topo-line)"
+                  stroke-width="1"
+                />
+                <path
+                  d="M0 80 Q70 50 140 65 T270 40 T300 55"
+                  fill="none"
+                  stroke="var(--topo-line)"
+                  stroke-width="1"
+                />
+                <path
+                  d="M0 55 Q90 30 160 40 T280 20 T300 30"
+                  fill="none"
+                  stroke="var(--topo-line)"
+                  stroke-width="1"
+                />
+              </svg>
+              <!-- trail dots, color = popularity -->
+              <div
+                class="trail-pin pin-hot"
+                style="left: 35%; top: 28%"
+                aria-label="Vidden"
+              ></div>
+              <div
+                class="trail-pin pin-hot"
+                style="left: 62%; top: 42%"
+                aria-label="Fløyen"
+              ></div>
+              <div
+                class="trail-pin pin-warm"
+                style="left: 20%; top: 55%"
+                aria-label="Stoltzekleiven"
+              ></div>
+              <div
+                class="trail-pin pin-warm"
+                style="left: 78%; top: 22%"
+                aria-label="Ulriken"
+              ></div>
+              <div
+                class="trail-pin pin-mild"
+                style="left: 50%; top: 65%"
+                aria-label="Sandviksfjellet"
+              ></div>
+              <div
+                class="trail-pin pin-mild"
+                style="left: 85%; top: 58%"
+                aria-label="Løvstakken"
+              ></div>
+              <!-- "you are here" -->
+              <div class="you-pin" style="left: 48%; top: 46%">
+                <span class="you-pulse"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- trail list with popularity bars -->
+          <ul class="trails-list">
+            <li>
+              <div class="trail-row">
+                <span class="trail-dot dot-hot"></span>
+                <div class="trail-info">
+                  <strong>Vidden</strong>
+                  <p>Fløyen → Ulriken · 13.2 km</p>
+                </div>
+                <span class="trail-count">384</span>
+              </div>
+              <div class="trail-bar">
+                <div class="trail-fill fill-hot" style="width: 92%"></div>
+              </div>
+            </li>
+            <li>
+              <div class="trail-row">
+                <span class="trail-dot dot-hot"></span>
+                <div class="trail-info">
+                  <strong>Fløyen rundt</strong>
+                  <p>Fløibanen · 4.8 km</p>
+                </div>
+                <span class="trail-count">341</span>
+              </div>
+              <div class="trail-bar">
+                <div class="trail-fill fill-hot" style="width: 82%"></div>
+              </div>
+            </li>
+            <li>
+              <div class="trail-row">
+                <span class="trail-dot dot-warm"></span>
+                <div class="trail-info">
+                  <strong>Stoltzekleiven</strong>
+                  <p>Fjellveien · 2.1 km</p>
+                </div>
+                <span class="trail-count">218</span>
+              </div>
+              <div class="trail-bar">
+                <div class="trail-fill fill-warm" style="width: 53%"></div>
+              </div>
+            </li>
+            <li>
+              <div class="trail-row">
+                <span class="trail-dot dot-warm"></span>
+                <div class="trail-info">
+                  <strong>Ulriken via Arna</strong>
+                  <p>Montana · 6.4 km</p>
+                </div>
+                <span class="trail-count">165</span>
+              </div>
+              <div class="trail-bar">
+                <div class="trail-fill fill-warm" style="width: 40%"></div>
+              </div>
+            </li>
+            <li>
+              <div class="trail-row">
+                <span class="trail-dot dot-mild"></span>
+                <div class="trail-info">
+                  <strong>Løvstakken</strong>
+                  <p>Gyldenpris · 3.7 km</p>
+                </div>
+                <span class="trail-count">89</span>
+              </div>
+              <div class="trail-bar">
+                <div class="trail-fill fill-mild" style="width: 21%"></div>
+              </div>
+            </li>
+          </ul>
+
+          <!-- legend -->
+          <div class="trails-legend">
+            <span class="legend-item"
+              ><span class="trail-dot dot-hot"></span> High</span
+            >
+            <span class="legend-item"
+              ><span class="trail-dot dot-warm"></span> Medium</span
+            >
+            <span class="legend-item"
+              ><span class="trail-dot dot-mild"></span> Low</span
+            >
+            <span class="legend-label">hikers this week</span>
+          </div>
+        </div>
+      </aside>
     </div>
   </body>
 </html>
