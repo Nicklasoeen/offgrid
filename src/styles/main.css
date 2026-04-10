@@ -1067,6 +1067,26 @@ ul {
   color: var(--text-secondary);
 }
 
+.form-error {
+  font-size: 14px;
+  color: #c0392b;
+  background: #fdf0ee;
+  border: 1px solid #f5c6c0;
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-bottom: 4px;
+}
+
+.form-banner {
+  font-size: 14px;
+  color: var(--brand-dark);
+  background: var(--brand-light);
+  border: 1px solid var(--brand);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-bottom: 16px;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
