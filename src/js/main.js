@@ -5,5 +5,10 @@ if (page === 'login') {
 } else if (page === 'register') {
   import('./pages/register.js').then(({ initRegisterPage }) => initRegisterPage());
 } else if (page === 'feed') {
-  import('./utils/auth-guard.js').then(({ requireAuth }) => requireAuth());
+  Promise.all([import('./utils/auth-guard.js'), import('./pages/feed.js')]).then(
+    ([{ requireAuth }, { initFeedPage }]) => {
+      requireAuth();
+      initFeedPage();
+    },
+  );
 }
