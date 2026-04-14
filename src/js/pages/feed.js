@@ -4,12 +4,15 @@ import { getApiKey, getToken, getUser, setApiKey } from '../utils/storage.js';
 
 export function initFeedPage() {
   const form = document.querySelector('[data-create-post-form]');
-  if (!form) return;
+  const postsContainer = document.querySelector('[data-feed-posts]');
+  const emptyState = document.querySelector('[data-feed-empty]');
+  if (!form || !postsContainer || !emptyState) return;
 
   const feedbackEl = form.querySelector('[data-composer-feedback]');
   const submitBtn = form.querySelector('.composer-submit');
 
-  hydratePosts().catch(() => {
+  hydratePosts(postsContainer, emptyState).catch((error) => {
+    setFeedback(feedbackEl, error.message ?? 'Could not load posts.', 'error');
   });
 
   form.addEventListener('submit', async (event) => {
@@ -42,7 +45,8 @@ export function initFeedPage() {
       if (mediaUrl) payload.media = { url: mediaUrl, alt: title };
 
       const createdPost = await createPost(payload, token, apiKey);
-      prependPostCard(createdPost, true);
+      prependPostCard(postsContainer, createdPost);
+      updateEmptyState(postsContainer, emptyState);
 
       form.reset();
       setFeedback(feedbackEl, 'Adventure published.', 'success');
@@ -55,7 +59,7 @@ export function initFeedPage() {
   });
 }
 
-async function hydratePosts() {
+async function hydratePosts(postsContainer, emptyState) {
   const token = getToken();
   const user = getUser();
   if (!token || !user?.name) return;
@@ -63,8 +67,12 @@ async function hydratePosts() {
   const apiKey = await ensureApiKey(token);
   const posts = await fetchProfilePosts(user.name, token, apiKey);
 
-  // render newest first
-  posts.slice(0, 8).reverse().forEach((post) => prependPostCard(post, true));
+  postsContainer.innerHTML = '';
+  posts.slice(0, 12).forEach((post) => {
+    postsContainer.append(createPostCard(post));
+  });
+
+  updateEmptyState(postsContainer, emptyState);
 }
 
 async function ensureApiKey(token) {
@@ -85,18 +93,20 @@ function setFeedback(element, message, kind) {
   if (kind === 'success') element.classList.add('is-success');
 }
 
-function prependPostCard(post, isApiPost = false) {
-  const feed = document.querySelector('.feed-center');
-  const firstPost = feed?.querySelector('.post-card');
-  if (!feed || !firstPost) return;
+function prependPostCard(postsContainer, post) {
+  postsContainer.prepend(createPostCard(post));
+}
 
+function createPostCard(post) {
   const user = getUser();
-  const name = user?.name || post.author?.name || 'You';
+  const name = post.author?.name || user?.name || 'You';
   const initials = initialsFrom(name);
+  const reactions = Number(post._count?.reactions ?? 0);
+  const comments = Number(post._count?.comments ?? 0);
+  const createdText = post.created ? formatRelativeTime(post.created) : 'Just now';
 
   const card = document.createElement('article');
   card.className = 'card post-card';
-  if (isApiPost) card.dataset.generatedPost = 'true';
   card.innerHTML = `
     <div class="post-header">
       <div class="avatar-md">${escapeHtml(initials)}</div>
@@ -104,15 +114,15 @@ function prependPostCard(post, isApiPost = false) {
         <div class="post-name-row">
           <a href="#" class="post-author-name">${escapeHtml(name)}</a>
         </div>
-        <p class="post-headline">Just now</p>
+        <p class="post-headline">${escapeHtml(createdText)}</p>
       </div>
     </div>
     <div class="post-text">
       <p>${escapeHtml(post.body || '')}</p>
     </div>
     <div class="post-counts">
-      <span>👍 0</span>
-      <span>0 comments</span>
+      <span>👍 ${reactions}</span>
+      <span>${comments} comments</span>
     </div>
     <div class="post-action-bar">
       <button class="action-btn" type="button" aria-label="Like">
@@ -135,7 +145,11 @@ function prependPostCard(post, isApiPost = false) {
     card.querySelector('.post-text')?.insertAdjacentElement('afterend', media);
   }
 
-  feed.insertBefore(card, firstPost);
+  return card;
+}
+
+function updateEmptyState(postsContainer, emptyState) {
+  emptyState.hidden = postsContainer.children.length > 0;
 }
 
 function initialsFrom(name) {
@@ -156,4 +170,15 @@ function escapeHtml(value) {
 
 function escapeAttr(value) {
   return escapeHtml(value);
+}
+
+function formatRelativeTime(isoDate) {
+  const diffMs = Date.now() - new Date(isoDate).getTime();
+  const diffMinutes = Math.max(1, Math.floor(diffMs / 60000));
+
+  if (diffMinutes < 60) return `${diffMinutes}m ago`;
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  return `${diffDays}d ago`;
 }

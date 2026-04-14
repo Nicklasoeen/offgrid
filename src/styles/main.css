@@ -1,7 +1,6 @@
 /* offgrid global styles */
 
 :root {
-  color-scheme: light;
   --brand: #2f6c50;
   --brand-dark: #1f4f3b;
   --brand-light: #e8f3ec;
@@ -358,6 +357,20 @@ ul {
   display: grid;
   gap: 8px;
   min-width: 0;
+}
+
+.feed-posts {
+  display: grid;
+  gap: 8px;
+}
+
+.feed-empty {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 13px;
 }
 
 .composer {
