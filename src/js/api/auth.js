@@ -1,3 +1,5 @@
+import { authFetch } from './fetcher.js';
+
 const API_BASE = 'https://v2.api.noroff.dev';
 
 /**
@@ -41,7 +43,7 @@ export async function loginUser({ email, password }) {
  * @param {string} accessToken
  */
 export async function createApiKey(accessToken) {
-  const res = await fetch(`${API_BASE}/auth/create-api-key`, {
+  const res = await authFetch(`${API_BASE}/auth/create-api-key`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

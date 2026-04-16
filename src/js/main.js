@@ -1,3 +1,7 @@
+import { logout } from './utils/auth-guard.js';
+
+document.querySelector('[data-logout-btn]')?.addEventListener('click', () => logout());
+
 const page = document.body.dataset.page;
 
 if (page === 'login') {
@@ -9,6 +13,13 @@ if (page === 'login') {
     ([{ requireAuth }, { initFeedPage }]) => {
       requireAuth();
       initFeedPage();
+    },
+  );
+} else if (page === 'profile') {
+  Promise.all([import('./utils/auth-guard.js'), import('./pages/profile.js')]).then(
+    ([{ requireAuth }, { initProfilePage }]) => {
+      requireAuth();
+      initProfilePage();
     },
   );
 }
