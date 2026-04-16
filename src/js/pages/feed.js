@@ -8,6 +8,19 @@ export function initFeedPage() {
   const emptyState = document.querySelector('[data-feed-empty]');
   if (!form || !postsContainer || !emptyState) return;
 
+  const currentUser = getUser();
+  if (currentUser?.name) {
+    const initials = initialsFrom(currentUser.name);
+    const navAvatar = document.querySelector('[data-nav-avatar]');
+    if (navAvatar) navAvatar.textContent = initials;
+    const composerAvatar = document.querySelector('[data-composer-avatar]');
+    if (composerAvatar) composerAvatar.textContent = initials;
+    const sidebarAvatar = document.querySelector('[data-sidebar-avatar]');
+    if (sidebarAvatar) sidebarAvatar.textContent = initials;
+    const sidebarName = document.querySelector('[data-sidebar-name]');
+    if (sidebarName) sidebarName.textContent = currentUser.name;
+  }
+
   const feedbackEl = form.querySelector('[data-composer-feedback]');
   const submitBtn = form.querySelector('.composer-submit');
 

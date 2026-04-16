@@ -1,6 +1,6 @@
 import { createApiKey } from '../api/auth.js';
-import { fetchProfile, fetchProfilePosts } from '../api/posts.js';
-import { getApiKey, getToken, getUser, setApiKey, setUser } from '../utils/storage.js';
+import { fetchProfilePosts } from '../api/posts.js';
+import { getApiKey, getToken, getUser, setApiKey } from '../utils/storage.js';
 
 export function initProfilePage() {
   const user = getUser();
@@ -21,41 +21,19 @@ function hydrateProfileHeader(user) {
   const name = user.name || 'Explorer';
   const email = user.email || 'No email saved';
   const initials = initialsFrom(name);
-  const avatarUrl = getAvatarUrl(user.avatar);
 
   setText('[data-profile-name]', name);
   setText('[data-profile-username]', name);
   setText('[data-profile-email-secondary]', email);
-  renderAvatar('[data-profile-avatar]', initials, avatarUrl, `${name} avatar`);
-  renderAvatar('[data-nav-avatar]', initials, avatarUrl, `${name} avatar`);
+  setText('[data-profile-avatar]', initials);
+  setText('[data-nav-avatar]', initials);
 }
 
 async function hydrateProfilePosts(user, token, postsContainer, emptyState) {
   const profileName = user.name;
   const apiKey = await ensureApiKey(token);
-  let mergedUser = { ...user };
-
-  try {
-    const liveProfile = await fetchProfile(profileName, token, apiKey);
-    mergedUser = {
-      ...mergedUser,
-      avatar: liveProfile?.avatar ?? mergedUser.avatar ?? null,
-    };
-  } catch {
-    // fall back to cached session data if profile fetch fails
-  }
 
   const posts = await fetchProfilePosts(profileName, token, apiKey);
-
-  if (!getAvatarUrl(mergedUser.avatar)) {
-    mergedUser = {
-      ...mergedUser,
-      avatar: posts[0]?.author?.avatar ?? mergedUser.avatar ?? null,
-    };
-  }
-
-  setUser(mergedUser);
-  hydrateProfileHeader(mergedUser);
 
   postsContainer.innerHTML = '';
 
@@ -116,43 +94,6 @@ function createPostCard(post, fallbackName) {
 function setText(selector, value) {
   const element = document.querySelector(selector);
   if (element) element.textContent = value;
-}
-
-function renderAvatar(selector, initials, avatarUrl, alt) {
-  const element = document.querySelector(selector);
-  if (!element) return;
-
-  if (!avatarUrl) {
-    element.textContent = initials;
-    return;
-  }
-
-  const image = document.createElement('img');
-  image.className = 'avatar-fill avatar-photo';
-  image.src = avatarUrl;
-  image.alt = alt;
-  image.addEventListener('error', () => {
-    element.textContent = initials;
-  });
-
-  element.textContent = '';
-  element.append(image);
-}
-
-function getAvatarUrl(avatar) {
-  if (!avatar) return '';
-
-  let raw = '';
-  if (typeof avatar === 'string') raw = avatar;
-  else {
-    raw = avatar.url || avatar.href || avatar.data?.url || avatar.image?.url || '';
-  }
-
-  const value = String(raw).trim();
-  if (!value) return '';
-  if (value.startsWith('//')) return `https:${value}`;
-  if (value.startsWith('www.')) return `https://${value}`;
-  return value;
 }
 
 function initialsFrom(name) {

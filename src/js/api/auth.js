@@ -6,9 +6,8 @@ const API_BASE = 'https://v2.api.noroff.dev';
  * register a new user.
  * @param {{ name: string, email: string, password: string, avatar?: string }} data
  */
-export async function registerUser({ name, email, password, avatar }) {
+export async function registerUser({ name, email, password }) {
   const body = { name, email, password };
-  if (avatar) body.avatar = { url: avatar, alt: name };
 
   const res = await fetch(`${API_BASE}/auth/register`, {
     method: 'POST',

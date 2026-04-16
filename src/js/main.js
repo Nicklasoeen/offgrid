@@ -1,4 +1,5 @@
 import { logout } from './utils/auth-guard.js';
+import { getUser } from './utils/storage.js';
 
 document.querySelector('[data-logout-btn]')?.addEventListener('click', () => logout());
 

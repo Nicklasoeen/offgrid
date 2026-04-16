@@ -229,10 +229,11 @@ button.nav-item {
   height: 24px;
   border-radius: 7px;
   border: 1px solid var(--line);
-  background: var(--surface);
+  background: var(--brand-dark);
   color: #fff;
   font-size: 10px;
   font-weight: 700;
+  overflow: hidden;
 }
 
 .avatar-photo {

@@ -11,12 +11,12 @@ export function initRegisterPage() {
     e.preventDefault();
     clearError(form);
 
-    const { name, email, password, avatar } = Object.fromEntries(new FormData(form));
+    const { name, email, password } = Object.fromEntries(new FormData(form));
     submitBtn.disabled = true;
     submitBtn.textContent = 'Creating account…';
 
     try {
-      await registerUser({ name, email, password, avatar: avatar || undefined });
+      await registerUser({ name, email, password });
       window.location.href = '/login.html?registered=1';
     } catch (err) {
       showError(form, err.message);
