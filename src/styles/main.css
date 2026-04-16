@@ -104,9 +104,11 @@ ul {
 
 .topbar {
   position: sticky;
-  top: 10px;
+  top: 0;
   z-index: 100;
-  margin-top: 10px;
+  max-width: 1128px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
 .topbar-inner {
@@ -115,8 +117,6 @@ ul {
   justify-content: center;
   gap: 8px;
   width: 100%;
-  max-width: 1080px;
-  margin: 0 auto;
   padding: 0 12px;
   height: 56px;
   background: var(--surface);
@@ -1001,7 +1001,7 @@ button.nav-item {
 
 .auth-shell {
   position: relative;
-  width: min(1080px, calc(100% - 2rem));
+  width: min(1128px, calc(100% - 2rem));
   min-height: 100vh;
   margin: 0 auto;
   padding: 2rem 0;
@@ -1156,9 +1156,9 @@ button.nav-item {
 
 .profile-page {
   width: 100%;
-  max-width: 1080px;
+  max-width: 1128px;
   margin: 24px auto;
-  padding: 0 12px;
+  padding: 0 24px;
   display: grid;
   gap: 12px;
 }
@@ -1250,11 +1250,7 @@ button.nav-item {
   }
 
   .topbar {
-    top: 8px;
-    margin-top: 8px;
-  }
-
-  .topbar-inner {
+    top: 0;
     padding: 0 8px;
   }
 
