@@ -1,4 +1,31 @@
+import { authFetch } from './fetcher.js';
+
 const API_BASE = 'https://v2.api.noroff.dev';
+
+/**
+ * fetch profile details for a user
+ * @param {string} profileName
+ * @param {string} accessToken
+ * @param {string} apiKey
+ */
+export async function fetchProfile(profileName, accessToken, apiKey) {
+  const res = await authFetch(
+    `${API_BASE}/social/profiles/${encodeURIComponent(profileName)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    },
+  );
+
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.errors?.[0]?.message ?? `Could not load profile (HTTP ${res.status})`);
+  }
+
+  return json.data;
+}
 
 /**
  * create post
@@ -7,7 +34,7 @@ const API_BASE = 'https://v2.api.noroff.dev';
  * @param {string} apiKey
  */
 export async function createPost(post, accessToken, apiKey) {
-  const res = await fetch(`${API_BASE}/social/posts`, {
+  const res = await authFetch(`${API_BASE}/social/posts`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -31,7 +58,7 @@ export async function createPost(post, accessToken, apiKey) {
  * @param {string} apiKey
  */
 export async function fetchProfilePosts(profileName, accessToken, apiKey) {
-  const res = await fetch(
+  const res = await authFetch(
     `${API_BASE}/social/profiles/${encodeURIComponent(profileName)}/posts?_author=true&sort=created&sortOrder=desc`,
     {
       headers: {
