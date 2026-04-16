@@ -172,6 +172,14 @@ ul {
   transition: color 0.15s;
 }
 
+button.nav-item {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+}
+
 .nav-item span {
   line-height: 1;
 }
@@ -230,6 +238,12 @@ ul {
 .avatar-photo {
   display: block;
   object-fit: cover;
+}
+
+.avatar-fill {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
 }
 
 /* page body — 3 col grid */
@@ -982,8 +996,6 @@ ul {
   font-style: italic;
 }
 
-/* theme toggle */
-
 /* auth pages */
 
 .auth-shell {
@@ -1139,6 +1151,67 @@ ul {
   margin-bottom: 16px;
 }
 
+/* profile page */
+
+.profile-page {
+  width: 100%;
+  max-width: 1080px;
+  margin: 24px auto;
+  padding: 0 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.profile-simple-header {
+  padding: 16px;
+}
+
+.profile-simple-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.profile-simple-row h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.profile-simple-email {
+  color: var(--text-secondary);
+}
+
+.profile-simple-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 12px;
+  margin: 12px 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.profile-simple-stats div {
+  display: grid;
+  gap: 3px;
+}
+
+.profile-simple-stats dt {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+}
+
+.profile-simple-stats dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.profile-simple-posts {
+  padding: 16px;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1165,6 +1238,14 @@ ul {
   .page-body {
     grid-template-columns: 1fr;
     padding: 0 8px;
+  }
+
+  .profile-page {
+    padding: 0 8px;
+  }
+
+  .profile-simple-stats {
+    grid-template-columns: 1fr;
   }
 
   .topbar {

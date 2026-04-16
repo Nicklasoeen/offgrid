@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offgrid | Profile</title>
+    <meta
+      name="description"
+      content="View your Offgrid profile, recent adventures, and account details."
+    />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    <link rel="icon" href="/assets/offgrid-icon.png" />
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body data-page="profile">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="topbar-left">
+          <a class="brand" href="/index.html" aria-label="Offgrid home">
+            <img class="brand-icon" src="/assets/offgrid-icon.png" alt="" />
+          </a>
+        </div>
+
+        <nav class="topbar-nav" aria-label="Main">
+          <a class="nav-item" href="/index.html">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54A1.99 1.99 0 0 0 16 16h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
+              />
+            </svg>
+            <span>Feed</span>
+          </a>
+          <a class="nav-item" href="#">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M3 20h18v-2H3v2zm2.2-4h13.6L16 10h-3V7.6l1.3 1.3 1.4-1.4L12 4 8.3 7.5l1.4 1.4L11 7.6V10H8l-2.8 6z"
+              />
+            </svg>
+            <span>Adventurers</span>
+          </a>
+          <a
+            class="nav-item nav-item-notifications"
+            href="#"
+            aria-label="Notifications"
+          >
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6v-4.8c0-3.15-1.75-5.72-4.75-6.38V4a2.25 2.25 0 1 0-4.5 0v.82C6.75 5.48 5 8.05 5 11.2V16l-2 2v1h18v-1l-2-2z"
+              />
+            </svg>
+            <span>Notifications</span>
+            <span class="notification-badge" aria-hidden="true">2</span>
+          </a>
+          <a class="nav-item is-active" href="/profile.html">
+            <div class="avatar-xs" data-nav-avatar>OG</div>
+            <span>Me</span>
+          </a>
+          <button class="nav-item" type="button" data-logout-btn aria-label="Log out">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+            </svg>
+            <span>Log out</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="profile-page">
+      <section class="card profile-simple-header">
+        <div class="profile-simple-row">
+          <div class="avatar-lg" data-profile-avatar>OG</div>
+          <div>
+            <p class="eyebrow">Profile</p>
+            <h1 data-profile-name>Explorer</h1>
+          </div>
+        </div>
+
+        <dl class="profile-simple-stats">
+          <div>
+            <dt>Username</dt>
+            <dd data-profile-username></dd>
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd data-profile-email-secondary></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="card profile-simple-posts">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Activity</p>
+            <h2>Recent adventures</h2>
+          </div>
+        </div>
+
+        <section class="feed-posts" data-profile-posts></section>
+        <p class="feed-empty" data-profile-empty hidden>
+          No adventures published yet.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
