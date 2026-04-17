@@ -1,11 +1,13 @@
 import { createApiKey } from '../api/auth.js';
-import { createPost, fetchProfilePosts } from '../api/posts.js';
+import { createPost, fetchAllPosts } from '../api/posts.js';
 import { getApiKey, getToken, getUser, setApiKey } from '../utils/storage.js';
 
 export function initFeedPage() {
   const form = document.querySelector('[data-create-post-form]');
   const postsContainer = document.querySelector('[data-feed-posts]');
   const emptyState = document.querySelector('[data-feed-empty]');
+  const searchForm = document.querySelector('[data-search-form]');
+  const searchInput = document.querySelector('[data-search-input]');
   if (!form || !postsContainer || !emptyState) return;
 
   const currentUser = getUser();
@@ -23,10 +25,31 @@ export function initFeedPage() {
 
   const feedbackEl = form.querySelector('[data-composer-feedback]');
   const submitBtn = form.querySelector('.composer-submit');
+  const defaultEmptyText = 'No posts yet. Publish your first adventure.';
+  let allPosts = [];
 
-  hydratePosts(postsContainer, emptyState).catch((error) => {
-    setFeedback(feedbackEl, error.message ?? 'Could not load posts.', 'error');
-  });
+  hydratePosts(feedbackEl)
+    .then((posts) => {
+      allPosts = posts;
+      renderPosts(postsContainer, emptyState, allPosts, currentUser, defaultEmptyText);
+    })
+    .catch((error) => {
+      setFeedback(feedbackEl, error.message ?? 'Could not load posts.', 'error');
+    });
+
+  if (searchForm && searchInput) {
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      renderFilteredPosts(
+        postsContainer,
+        emptyState,
+        allPosts,
+        currentUser,
+        searchInput.value,
+        defaultEmptyText,
+      );
+    });
+  }
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -58,8 +81,16 @@ export function initFeedPage() {
       if (mediaUrl) payload.media = { url: mediaUrl, alt: title };
 
       const createdPost = await createPost(payload, token, apiKey);
-      prependPostCard(postsContainer, createdPost);
-      updateEmptyState(postsContainer, emptyState);
+      allPosts.unshift(createdPost);
+      const queryValue = searchInput?.value ?? '';
+      renderFilteredPosts(
+        postsContainer,
+        emptyState,
+        allPosts,
+        currentUser,
+        queryValue,
+        defaultEmptyText,
+      );
 
       form.reset();
       setFeedback(feedbackEl, 'Adventure published.', 'success');
@@ -72,20 +103,54 @@ export function initFeedPage() {
   });
 }
 
-async function hydratePosts(postsContainer, emptyState) {
+/**
+ * Loads all posts from the API for feed rendering.
+ * @param {HTMLElement|null} feedbackEl - optional element for error feedback
+ * @returns {Promise<Array>} Array of posts
+ */
+async function hydratePosts(feedbackEl) {
   const token = getToken();
-  const user = getUser();
-  if (!token || !user?.name) return;
+  if (!token) return [];
 
-  const apiKey = await ensureApiKey(token);
-  const posts = await fetchProfilePosts(user.name, token, apiKey);
+  try {
+    const apiKey = await ensureApiKey(token);
+    return await fetchAllPosts(token, apiKey);
+  } catch (error) {
+    setFeedback(feedbackEl, error.message ?? 'Could not load posts.', 'error');
+    return [];
+  }
+}
 
+function renderFilteredPosts(postsContainer, emptyState, allPosts, user, query, defaultEmptyText) {
+  const filteredPosts = filterPosts(allPosts, query);
+  const activeQuery = String(query ?? '').trim();
+  const emptyMessage = activeQuery
+    ? `No posts matched "${activeQuery}".`
+    : defaultEmptyText;
+
+  renderPosts(postsContainer, emptyState, filteredPosts, user, emptyMessage);
+}
+
+function renderPosts(postsContainer, emptyState, posts, user, emptyMessage) {
   postsContainer.innerHTML = '';
-  posts.slice(0, 12).forEach((post) => {
-    postsContainer.append(createPostCard(post));
+  posts.forEach((post) => {
+    postsContainer.append(createPostCard(post, user));
   });
 
+  emptyState.textContent = emptyMessage;
   updateEmptyState(postsContainer, emptyState);
+}
+
+function filterPosts(posts, query) {
+  const searchTerm = String(query ?? '').trim().toLowerCase();
+  if (!searchTerm) return posts;
+
+  return posts.filter((post) => {
+    const body = String(post.body ?? '').toLowerCase();
+    const title = String(post.title ?? '').toLowerCase();
+    const author = String(post.author?.name ?? '').toLowerCase();
+    return body.includes(searchTerm) || title.includes(searchTerm) || author.includes(searchTerm);
+  });
 }
 
 async function ensureApiKey(token) {
@@ -106,12 +171,7 @@ function setFeedback(element, message, kind) {
   if (kind === 'success') element.classList.add('is-success');
 }
 
-function prependPostCard(postsContainer, post) {
-  postsContainer.prepend(createPostCard(post));
-}
-
-function createPostCard(post) {
-  const user = getUser();
+function createPostCard(post, user) {
   const name = post.author?.name || user?.name || 'You';
   const initials = initialsFrom(name);
   const reactions = Number(post._count?.reactions ?? 0);
@@ -125,7 +185,7 @@ function createPostCard(post) {
       <div class="avatar-md">${escapeHtml(initials)}</div>
       <div class="post-meta">
         <div class="post-name-row">
-          <a href="#" class="post-author-name">${escapeHtml(name)}</a>
+          <a href="/profile.html?user=${encodeURIComponent(name)}" class="post-author-name">${escapeHtml(name)}</a>
         </div>
         <p class="post-headline">${escapeHtml(createdText)}</p>
       </div>

@@ -77,3 +77,35 @@ export async function fetchProfilePosts(profileName, accessToken, apiKey) {
 
   return Array.isArray(json.data) ? json.data : [];
 }
+
+/**
+ * fetch all posts from the social feed
+ * results are sorted
+ * @param {string} accessToken bearer access token
+ * @param {string} apiKey Noroff API key
+ * @param {string} [query=''] optional text search query
+ * @returns {Promise<Array>} array of post objects
+ */
+export async function fetchAllPosts(accessToken, apiKey, query = '') {
+  const params = new URLSearchParams({
+    _author: 'true',
+    sort: 'created',
+    sortOrder: 'desc',
+    limit: '100',
+  });
+  if (query.trim()) params.set('q', query.trim());
+
+  const res = await authFetch(`${API_BASE}/social/posts?${params}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'X-Noroff-API-Key': apiKey,
+    },
+  });
+
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.errors?.[0]?.message ?? `Could not load posts (HTTP ${res.status})`);
+  }
+
+  return Array.isArray(json.data) ? json.data : [];
+}
