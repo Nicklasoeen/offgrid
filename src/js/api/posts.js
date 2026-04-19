@@ -109,3 +109,29 @@ export async function fetchAllPosts(accessToken, apiKey, query = '') {
 
   return Array.isArray(json.data) ? json.data : [];
 }
+
+/**
+ * fetch a single post.
+ * @param {string} postId
+ * @param {string} accessToken
+ * @param {string} apiKey
+ * @returns {Promise<object>}
+ */
+export async function fetchPostById(postId, accessToken, apiKey) {
+  const res = await authFetch(
+    `${API_BASE}/social/posts/${encodeURIComponent(postId)}?_author=true&_comments=true&_reactions=true`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    },
+  );
+
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.errors?.[0]?.message ?? `Could not load post (HTTP ${res.status})`);
+  }
+
+  return json.data;
+}

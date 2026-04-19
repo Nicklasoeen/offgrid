@@ -172,6 +172,8 @@ function setFeedback(element, message, kind) {
 }
 
 function createPostCard(post, user) {
+  const postId = String(post.id ?? post._id ?? '');
+  const postUrl = postId ? `/post.html?id=${encodeURIComponent(postId)}` : '/index.html';
   const name = post.author?.name || user?.name || 'You';
   const initials = initialsFrom(name);
   const reactions = Number(post._count?.reactions ?? 0);
@@ -191,7 +193,9 @@ function createPostCard(post, user) {
       </div>
     </div>
     <div class="post-text">
-      <p>${escapeHtml(post.body || '')}</p>
+      <a href="${postUrl}" class="post-open-link" aria-label="Open post by ${escapeAttr(name)}">
+        <p>${escapeHtml(post.body || '')}</p>
+      </a>
     </div>
     <div class="post-counts">
       <span>👍 ${reactions}</span>

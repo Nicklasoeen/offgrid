@@ -23,4 +23,11 @@ if (page === 'login') {
       initProfilePage();
     },
   );
+} else if (page === 'post') {
+  Promise.all([import('./utils/auth-guard.js'), import('./pages/post.js')]).then(
+    ([{ requireAuth }, { initPostPage }]) => {
+      requireAuth();
+      initPostPage();
+    },
+  );
 }
