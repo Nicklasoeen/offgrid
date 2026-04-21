@@ -135,3 +135,65 @@ export async function fetchPostById(postId, accessToken, apiKey) {
 
   return json.data;
 }
+
+/**
+ * update an existing post.
+ * @param {string} postId
+ * @param {{ title?: string, body?: string, media?: { url: string, alt: string } }} updates
+ * @param {string} accessToken
+ * @param {string} apiKey
+ * @returns {Promise<object>}
+ */
+export async function updatePost(postId, updates, accessToken, apiKey) {
+  const res = await authFetch(
+    `${API_BASE}/social/posts/${encodeURIComponent(postId)}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+      body: JSON.stringify(updates),
+    },
+  );
+
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.errors?.[0]?.message ?? `Could not update post (HTTP ${res.status})`);
+  }
+
+  return json.data;
+}
+
+/**
+ * delete an existing post.
+ * @param {string} postId
+ * @param {string} accessToken
+ * @param {string} apiKey
+ * @returns {Promise<boolean>}
+ */
+export async function deletePost(postId, accessToken, apiKey) {
+  const res = await authFetch(
+    `${API_BASE}/social/posts/${encodeURIComponent(postId)}`,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    },
+  );
+
+  if (!res.ok) {
+    let message = `Could not delete post (HTTP ${res.status})`;
+    try {
+      const json = await res.json();
+      message = json.errors?.[0]?.message ?? message;
+    } catch {
+    }
+    throw new Error(message);
+  }
+
+  return true;
+}

@@ -9,8 +9,13 @@
   --surface-raised: #ffffff;
   --line: #e8e5de;
   --text: #191919;
+  --text-primary: #191919;
   --text-secondary: rgba(0, 0, 0, 0.6);
   --text-tertiary: rgba(0, 0, 0, 0.4);
+  --card-bg: #ffffff;
+  --input-bg: #fafaf9;
+  --border-color: #e8e5de;
+  --accent: #2f6c50;
   --shadow-card: 0 2px 8px rgba(47, 108, 80, 0.07), 0 0 1px rgba(0, 0, 0, 0.08);
   --shadow-hover:
     0 4px 16px rgba(47, 108, 80, 0.13), 0 0 1px rgba(0, 0, 0, 0.1);
@@ -523,6 +528,7 @@ button.nav-item {
 
 /* post cards */
 .post-card {
+  position: relative;
   padding: 0;
 }
 
@@ -530,7 +536,7 @@ button.nav-item {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  padding: 12px 16px 0;
+  padding: 12px 56px 0 16px;
 }
 
 .post-meta {
@@ -1329,4 +1335,216 @@ button.nav-item {
   height: 1.1rem;
   color: var(--brand);
   fill: currentColor;
+}
+
+.edit-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.edit-modal.hidden {
+  display: none;
+}
+
+.edit-modal-content {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.edit-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.edit-form label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.edit-form textarea,
+.edit-form input[type="url"] {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  resize: vertical;
+}
+
+.edit-form textarea:focus,
+.edit-form input[type="url"]:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.edit-form textarea {
+  min-height: 120px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn-cancel,
+.btn-save {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    opacity 0.15s,
+    background 0.15s;
+}
+
+.btn-cancel {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.btn-cancel:hover {
+  opacity: 0.8;
+}
+
+.btn-save {
+  background: var(--brand);
+  color: #fff;
+}
+
+.btn-save:hover {
+  opacity: 0.9;
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.post-owner-controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
+.btn-owner-menu {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.btn-owner-menu svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+}
+
+.btn-owner-menu:hover,
+.btn-owner-menu[aria-expanded="true"] {
+  color: var(--brand);
+  border-color: var(--brand);
+  background: var(--brand-light);
+}
+
+.owner-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  min-width: 150px;
+  padding: 0.3rem;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.owner-menu[hidden] {
+  display: none;
+}
+
+.owner-menu-item {
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 0.45rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.owner-menu-item:hover {
+  background: #f4f3f1;
+}
+
+.owner-menu-item-danger {
+  color: #b42318;
+}
+
+.owner-menu-item-danger:hover {
+  background: #fdecec;
+}
+
+.edit-feedback {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  display: none;
+}
+
+.edit-feedback.show {
+  display: block;
+}
+
+.edit-feedback.success {
+  background: rgba(34, 197, 94, 0.1);
+  color: rgb(22, 163, 74);
+  border: 1px solid rgb(134, 239, 172);
+}
+
+.edit-feedback.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(220, 38, 38);
+  border: 1px solid rgb(252, 165, 165);
 }

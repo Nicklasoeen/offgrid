@@ -1,44 +1,58 @@
 import { createApiKey } from '../api/auth.js';
-import { fetchProfilePosts } from '../api/posts.js';
+import { fetchProfile, fetchProfilePosts } from '../api/posts.js';
 import { getApiKey, getToken, getUser, setApiKey } from '../utils/storage.js';
 
 export function initProfilePage() {
-  const user = getUser();
+  const loggedInUser = getUser();
   const token = getToken();
   const postsContainer = document.querySelector('[data-profile-posts]');
   const emptyState = document.querySelector('[data-profile-empty]');
 
-  if (!user || !token || !postsContainer || !emptyState) return;
+  if (!loggedInUser || !token || !postsContainer || !emptyState) return;
 
-  hydrateProfileHeader(user);
-  hydrateProfilePosts(user, token, postsContainer, emptyState).catch(() => {
+  const requestedProfileName =
+    new URLSearchParams(window.location.search).get('user')?.trim() ||
+    loggedInUser.name;
+
+  const navInitials = initialsFrom(loggedInUser.name || 'Explorer');
+  setText('[data-nav-avatar]', navInitials);
+
+  hydrateProfilePage(requestedProfileName, loggedInUser, token, postsContainer, emptyState).catch(() => {
     emptyState.hidden = false;
-    emptyState.textContent = 'Could not load your profile activity right now.';
+    emptyState.textContent = 'Could not load profile activity right now.';
   });
 }
 
-function hydrateProfileHeader(user) {
-  const name = user.name || 'Explorer';
-  const email = user.email || 'No email saved';
+async function hydrateProfilePage(profileName, loggedInUser, token, postsContainer, emptyState) {
+  const apiKey = await ensureApiKey(token);
+  const [profile, posts] = await Promise.all([
+    fetchProfile(profileName, token, apiKey),
+    fetchProfilePosts(profileName, token, apiKey),
+  ]);
+
+  hydrateProfileHeader(profile, loggedInUser);
+  hydrateProfilePosts(postsContainer, emptyState, posts, profileName);
+}
+
+function hydrateProfileHeader(profile, loggedInUser) {
+  const name = profile?.name || 'Explorer';
+  const isOwnProfile = name === loggedInUser?.name;
+  const email = isOwnProfile
+    ? loggedInUser?.email || 'No email saved'
+    : profile?.email || 'Email hidden';
   const initials = initialsFrom(name);
 
   setText('[data-profile-name]', name);
   setText('[data-profile-username]', name);
   setText('[data-profile-email-secondary]', email);
   setText('[data-profile-avatar]', initials);
-  setText('[data-nav-avatar]', initials);
 }
 
-async function hydrateProfilePosts(user, token, postsContainer, emptyState) {
-  const profileName = user.name;
-  const apiKey = await ensureApiKey(token);
-
-  const posts = await fetchProfilePosts(profileName, token, apiKey);
-
+function hydrateProfilePosts(postsContainer, emptyState, posts, fallbackName) {
   postsContainer.innerHTML = '';
 
   posts.slice(0, 12).forEach((post) => {
-    postsContainer.append(createPostCard(post, profileName));
+    postsContainer.append(createPostCard(post, fallbackName));
   });
 
   emptyState.hidden = posts.length > 0;
@@ -54,6 +68,8 @@ async function ensureApiKey(token) {
 }
 
 function createPostCard(post, fallbackName) {
+  const postId = String(post.id ?? post._id ?? '');
+  const postUrl = postId ? `/post.html?id=${encodeURIComponent(postId)}` : '/profile.html';
   const name = post.author?.name || fallbackName || 'You';
   const initials = initialsFrom(name);
   const reactions = Number(post._count?.reactions ?? 0);
@@ -67,13 +83,15 @@ function createPostCard(post, fallbackName) {
       <div class="avatar-md">${escapeHtml(initials)}</div>
       <div class="post-meta">
         <div class="post-name-row">
-          <a href="/profile.html" class="post-author-name">${escapeHtml(name)}</a>
+          <a href="/profile.html?user=${encodeURIComponent(name)}" class="post-author-name">${escapeHtml(name)}</a>
         </div>
         <p class="post-headline">${escapeHtml(createdText)}</p>
       </div>
     </div>
     <div class="post-text">
-      <p>${escapeHtml(post.body || '')}</p>
+      <a href="${postUrl}" class="post-open-link" aria-label="Open post by ${escapeAttr(name)}">
+        <p>${escapeHtml(post.body || '')}</p>
+      </a>
     </div>
     <div class="post-counts">
       <span>👍 ${reactions}</span>
