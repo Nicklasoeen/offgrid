@@ -1,5 +1,10 @@
 import { createApiKey } from '../api/auth.js';
-import { fetchProfile, fetchProfilePosts } from '../api/posts.js';
+import {
+  fetchProfile,
+  fetchProfilePosts,
+  followProfile,
+  unfollowProfile,
+} from '../api/posts.js';
 import { getApiKey, getToken, getUser, setApiKey } from '../utils/storage.js';
 
 export function initProfilePage() {
@@ -30,11 +35,11 @@ async function hydrateProfilePage(profileName, loggedInUser, token, postsContain
     fetchProfilePosts(profileName, token, apiKey),
   ]);
 
-  hydrateProfileHeader(profile, loggedInUser);
+  hydrateProfileHeader(profile, loggedInUser, token, apiKey);
   hydrateProfilePosts(postsContainer, emptyState, posts, profileName);
 }
 
-function hydrateProfileHeader(profile, loggedInUser) {
+function hydrateProfileHeader(profile, loggedInUser, token, apiKey) {
   const name = profile?.name || 'Explorer';
   const isOwnProfile = name === loggedInUser?.name;
   const email = isOwnProfile
@@ -46,6 +51,69 @@ function hydrateProfileHeader(profile, loggedInUser) {
   setText('[data-profile-username]', name);
   setText('[data-profile-email-secondary]', email);
   setText('[data-profile-avatar]', initials);
+
+  renderFollowAction(profile, loggedInUser, token, apiKey);
+}
+
+function isFollowingProfile(profile, loggedInUser) {
+  if (!profile || !loggedInUser?.name) return false;
+  if (!Array.isArray(profile.followers)) return false;
+  return profile.followers.some((follower) => follower?.name === loggedInUser.name);
+}
+
+function renderFollowAction(profile, loggedInUser, token, apiKey) {
+  const actions = document.querySelector('[data-profile-actions]');
+  if (!actions) return;
+
+  actions.innerHTML = '';
+
+  const profileName = profile?.name;
+  if (!profileName || profileName === loggedInUser?.name) return;
+
+  const followBtn = document.createElement('button');
+  followBtn.type = 'button';
+  followBtn.className = 'btn-follow-sm';
+
+  const feedback = document.createElement('p');
+  feedback.className = 'profile-follow-feedback';
+  feedback.hidden = true;
+
+  let isFollowing = isFollowingProfile(profile, loggedInUser);
+  updateFollowButton(followBtn, isFollowing, false);
+
+  followBtn.addEventListener('click', async () => {
+    updateFollowButton(followBtn, isFollowing, true);
+    feedback.hidden = true;
+
+    try {
+      if (isFollowing) {
+        await unfollowProfile(profileName, token, apiKey);
+      } else {
+        await followProfile(profileName, token, apiKey);
+      }
+
+      isFollowing = !isFollowing;
+      updateFollowButton(followBtn, isFollowing, false);
+    } catch (error) {
+      updateFollowButton(followBtn, isFollowing, false);
+      feedback.hidden = false;
+      feedback.textContent = error.message ?? 'Could not update follow state.';
+    }
+  });
+
+  actions.append(followBtn, feedback);
+}
+
+function updateFollowButton(button, isFollowing, isLoading) {
+  button.disabled = isLoading;
+  button.classList.toggle('is-following', isFollowing);
+
+  if (isLoading) {
+    button.textContent = isFollowing ? 'Unfollowing...' : 'Following...';
+    return;
+  }
+
+  button.textContent = isFollowing ? 'Unfollow' : 'Follow';
 }
 
 function hydrateProfilePosts(postsContainer, emptyState, posts, fallbackName) {

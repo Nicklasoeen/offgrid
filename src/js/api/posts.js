@@ -10,7 +10,7 @@ const API_BASE = 'https://v2.api.noroff.dev';
  */
 export async function fetchProfile(profileName, accessToken, apiKey) {
   const res = await authFetch(
-    `${API_BASE}/social/profiles/${encodeURIComponent(profileName)}`,
+    `${API_BASE}/social/profiles/${encodeURIComponent(profileName)}?_followers=true&_following=true`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -196,4 +196,60 @@ export async function deletePost(postId, accessToken, apiKey) {
   }
 
   return true;
+}
+
+/**
+ * follow a profile
+ * @param {string} profileName
+ * @param {string} accessToken
+ * @param {string} apiKey
+ * @returns {Promise<object>}
+ */
+export async function followProfile(profileName, accessToken, apiKey) {
+  const res = await authFetch(
+    `${API_BASE}/social/profiles/${encodeURIComponent(profileName)}/follow`,
+    {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    },
+  );
+
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.errors?.[0]?.message ?? `Could not follow user (HTTP ${res.status})`);
+  }
+
+  return json.data;
+}
+
+/**
+ * unfollow a profile
+ * @param {string} profileName
+ * @param {string} accessToken
+ * @param {string} apiKey
+ * @returns {Promise<object>}
+ */
+export async function unfollowProfile(profileName, accessToken, apiKey) {
+  const res = await authFetch(
+    `${API_BASE}/social/profiles/${encodeURIComponent(profileName)}/follow`,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    },
+  );
+
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(
+      json.errors?.[0]?.message ?? `Could not unfollow user (HTTP ${res.status})`,
+    );
+  }
+
+  return json.data;
 }

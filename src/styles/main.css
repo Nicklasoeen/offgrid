@@ -21,6 +21,10 @@
     0 4px 16px rgba(47, 108, 80, 0.13), 0 0 1px rgba(0, 0, 0, 0.1);
   --radius: 12px;
   --radius-sm: 8px;
+  --topo-line: rgba(47, 108, 80, 0.12);
+  --hot: #d6443a;
+  --warm: #e8943a;
+  --mild: #4b9e76;
 }
 
 *,
@@ -759,7 +763,6 @@ button.nav-item {
   color: #fff;
   font-weight: 700;
   font-size: 13px;
-  cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
   transition:
@@ -769,6 +772,17 @@ button.nav-item {
 
 .btn-follow-sm:hover {
   background: var(--brand-dark);
+  transform: translateY(-1px);
+}
+
+.btn-follow-sm.is-following {
+  background: transparent;
+  border: 1px solid var(--brand);
+  color: var(--brand);
+}
+
+.btn-follow-sm.is-following:hover {
+  background: var(--brand-light);
   transform: translateY(-1px);
 }
 
@@ -816,13 +830,6 @@ button.nav-item {
 }
 
 /* trails near you */
-
-:root {
-  --topo-line: rgba(47, 108, 80, 0.12);
-  --hot: #d6443a;
-  --warm: #e8943a;
-  --mild: #4b9e76;
-}
 
 .trails-card {
   padding-bottom: 12px;
@@ -1184,9 +1191,23 @@ button.nav-item {
 
 .profile-simple-row {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 12px;
   align-items: center;
+}
+
+.profile-simple-main {
+  min-width: 0;
+}
+
+.profile-simple-actions {
+  justify-self: end;
+}
+
+.profile-follow-feedback {
+  margin-top: 0.45rem;
+  font-size: 12px;
+  color: #b42318;
 }
 
 .profile-simple-row h1 {
@@ -1333,7 +1354,7 @@ button.nav-item {
 .search-btn .icon {
   width: 1.1rem;
   height: 1.1rem;
-  color: var(--brand);
+  color: #fff;
   fill: currentColor;
 }
 
@@ -1414,6 +1435,14 @@ button.nav-item {
   border-top: 1px solid var(--border-color);
 }
 
+.btn-follow-sm,
+.btn-cancel,
+.btn-save,
+.btn-owner-menu,
+.owner-menu-item {
+  cursor: pointer;
+}
+
 .btn-cancel,
 .btn-save {
   padding: 0.6rem 1.2rem;
@@ -1421,7 +1450,6 @@ button.nav-item {
   border-radius: var(--radius);
   font-size: 0.95rem;
   font-weight: 600;
-  cursor: pointer;
   transition:
     opacity 0.15s,
     background 0.15s;
@@ -1467,7 +1495,6 @@ button.nav-item {
   border-radius: var(--radius-sm);
   background: #fff;
   color: var(--text-secondary);
-  cursor: pointer;
 }
 
 .btn-owner-menu svg {
@@ -1510,7 +1537,6 @@ button.nav-item {
   border-radius: 6px;
   font-size: 0.85rem;
   color: var(--text-primary);
-  cursor: pointer;
 }
 
 .owner-menu-item:hover {
