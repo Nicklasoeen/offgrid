@@ -8,6 +8,8 @@ export default defineConfig({
         feed: resolve(__dirname, 'index.html'),
         login: resolve(__dirname, 'login.html'),
         register: resolve(__dirname, 'register.html'),
+        post: resolve(__dirname, 'post.html'),
+        profile: resolve(__dirname, 'profile.html'),
       },
     },
   },
