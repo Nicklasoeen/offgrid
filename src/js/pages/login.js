@@ -31,7 +31,7 @@ export function initLoginPage() {
         setApiKey(key);
       }
 
-      window.location.href = '/index.html';
+      window.location.href = './index.html';
     } catch (err) {
       showError(form, err.message);
       submitBtn.disabled = false;

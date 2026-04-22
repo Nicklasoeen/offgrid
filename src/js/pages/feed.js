@@ -66,7 +66,7 @@ export function initFeedPage() {
 
     const token = getToken();
     if (!token) {
-      window.location.replace('/login.html');
+      window.location.replace('./login.html');
       return;
     }
 
@@ -173,7 +173,7 @@ function setFeedback(element, message, kind) {
 
 function createPostCard(post, user) {
   const postId = String(post.id ?? post._id ?? '');
-  const postUrl = postId ? `/post.html?id=${encodeURIComponent(postId)}` : '/index.html';
+  const postUrl = postId ? `./post.html?id=${encodeURIComponent(postId)}` : './index.html';
   const name = post.author?.name || user?.name || 'You';
   const initials = initialsFrom(name);
   const reactions = Number(post._count?.reactions ?? 0);
@@ -187,7 +187,7 @@ function createPostCard(post, user) {
       <div class="avatar-md">${escapeHtml(initials)}</div>
       <div class="post-meta">
         <div class="post-name-row">
-          <a href="/profile.html?user=${encodeURIComponent(name)}" class="post-author-name">${escapeHtml(name)}</a>
+          <a href="./profile.html?user=${encodeURIComponent(name)}" class="post-author-name">${escapeHtml(name)}</a>
         </div>
         <p class="post-headline">${escapeHtml(createdText)}</p>
       </div>

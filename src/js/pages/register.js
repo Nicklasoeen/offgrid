@@ -17,7 +17,7 @@ export function initRegisterPage() {
 
     try {
       await registerUser({ name, email, password });
-      window.location.href = '/login.html?registered=1';
+      window.location.href = './login.html?registered=1';
     } catch (err) {
       showError(form, err.message);
       submitBtn.disabled = false;

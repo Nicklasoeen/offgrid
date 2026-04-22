@@ -23,7 +23,7 @@ export async function initPostPage() {
 
   const token = getToken();
   if (!token) {
-    window.location.replace('/login.html');
+    window.location.replace('./login.html');
     return;
   }
 
@@ -184,7 +184,7 @@ async function handleDeletePost(postId) {
 
   try {
     await deletePost(postId, postState.token, postState.apiKey);
-    window.location.replace('/index.html');
+    window.location.replace('./index.html');
   } catch (error) {
     showFeedback(
       document.querySelector('[data-post-empty]'),
@@ -209,7 +209,7 @@ function createPostCard(post, user) {
       <div class="avatar-md">${escapeHtml(initials)}</div>
       <div class="post-meta">
         <div class="post-name-row">
-          <a href="/profile.html?user=${encodeURIComponent(name)}" class="post-author-name">${escapeHtml(name)}</a>
+          <a href="./profile.html?user=${encodeURIComponent(name)}" class="post-author-name">${escapeHtml(name)}</a>
         </div>
         <p class="post-headline">${escapeHtml(createdText)}</p>
       </div>

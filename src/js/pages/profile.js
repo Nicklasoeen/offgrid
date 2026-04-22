@@ -137,7 +137,7 @@ async function ensureApiKey(token) {
 
 function createPostCard(post, fallbackName) {
   const postId = String(post.id ?? post._id ?? '');
-  const postUrl = postId ? `/post.html?id=${encodeURIComponent(postId)}` : '/profile.html';
+  const postUrl = postId ? `./post.html?id=${encodeURIComponent(postId)}` : './profile.html';
   const name = post.author?.name || fallbackName || 'You';
   const initials = initialsFrom(name);
   const reactions = Number(post._count?.reactions ?? 0);
@@ -151,7 +151,7 @@ function createPostCard(post, fallbackName) {
       <div class="avatar-md">${escapeHtml(initials)}</div>
       <div class="post-meta">
         <div class="post-name-row">
-          <a href="/profile.html?user=${encodeURIComponent(name)}" class="post-author-name">${escapeHtml(name)}</a>
+          <a href="./profile.html?user=${encodeURIComponent(name)}" class="post-author-name">${escapeHtml(name)}</a>
         </div>
         <p class="post-headline">${escapeHtml(createdText)}</p>
       </div>
