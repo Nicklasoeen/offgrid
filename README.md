@@ -72,7 +72,7 @@ Session data is stored in `localStorage` (token, user, API key).
 
 ## Deployment
 
-Deployed app:
+Deployed app: https://nicklasoeen.github.io/offgrid/
 
 ## Author
 
