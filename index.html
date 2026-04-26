@@ -31,27 +31,6 @@
             </svg>
             <span>Feed</span>
           </a>
-          <a class="nav-item" href="#">
-            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M3 20h18v-2H3v2zm2.2-4h13.6L16 10h-3V7.6l1.3 1.3 1.4-1.4L12 4 8.3 7.5l1.4 1.4L11 7.6V10H8l-2.8 6z"
-              />
-            </svg>
-            <span>Adventurers</span>
-          </a>
-          <a
-            class="nav-item nav-item-notifications"
-            href="#"
-            aria-label="Notifications"
-          >
-            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6v-4.8c0-3.15-1.75-5.72-4.75-6.38V4a2.25 2.25 0 1 0-4.5 0v.82C6.75 5.48 5 8.05 5 11.2V16l-2 2v1h18v-1l-2-2z"
-              />
-            </svg>
-            <span>Notifications</span>
-            <span class="notification-badge" aria-hidden="true">2</span>
-          </a>
           <a class="nav-item" href="./profile.html">
             <div class="avatar-xs" data-nav-avatar>OG</div>
             <span>Me</span>
@@ -110,75 +89,28 @@
               ></textarea>
             </div>
 
-            <input
-              class="composer-media-input"
-              type="url"
-              name="mediaUrl"
-              placeholder="Optional photo URL (https://...)"
-            />
-
-            <p class="composer-feedback" data-composer-feedback hidden></p>
-
-            <div class="composer-actions">
-              <button
-                class="composer-btn"
-                type="button"
-                aria-hidden="true"
-                tabindex="-1"
-              >
-                <svg
-                  class="icon icon-green"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
-                  />
-                </svg>
-                Photos
-              </button>
-              <button
-                class="composer-btn"
-                type="button"
-                aria-hidden="true"
-                tabindex="-1"
-              >
-                <svg
-                  class="icon icon-blue"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"
-                  />
-                </svg>
-                Route
-              </button>
-              <button
-                class="composer-btn"
-                type="button"
-                aria-hidden="true"
-                tabindex="-1"
-              >
-                <svg
-                  class="icon icon-orange"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"
-                  />
-                </svg>
-                Stats
-              </button>
+            <div class="composer-media-row">
+              <input
+                class="composer-media-input"
+                type="url"
+                name="mediaUrl"
+                placeholder="Optional photo URL (https://...)"
+              />
               <button class="composer-btn composer-submit" type="submit">
                 Publish
               </button>
             </div>
+
+            <p class="composer-feedback" data-composer-feedback hidden></p>
           </form>
         </div>
 
-        <form class="search-bar" data-search-form role="search" aria-label="Search posts">
+        <form
+          class="search-bar"
+          data-search-form
+          role="search"
+          aria-label="Search posts"
+        >
           <input
             class="search-input"
             type="search"
@@ -189,7 +121,9 @@
           />
           <button class="search-btn" type="submit" aria-label="Search">
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+              <path
+                d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+              />
             </svg>
           </button>
         </form>
@@ -198,6 +132,11 @@
         <p class="feed-empty" data-feed-empty hidden>
           No posts yet. Publish your first adventure.
         </p>
+        <div class="load-more-wrap">
+          <button class="btn-load-more" type="button" data-load-more-btn hidden>
+            Load more
+          </button>
+        </div>
       </main>
 
       <!-- right sidebar -->
@@ -358,5 +297,14 @@
         </div>
       </aside>
     </div>
+
+    <footer class="site-footer">
+      <div class="site-footer-inner">
+        <p class="site-footer-brand">Offgrid</p>
+        <p class="site-footer-copy">
+          &copy; 2025 Nicklas &Oslash;en &mdash; Noroff assignment project.
+        </p>
+      </div>
+    </footer>
   </body>
 </html>

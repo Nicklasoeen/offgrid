@@ -25,29 +25,61 @@ export function initFeedPage() {
 
   const feedbackEl = form.querySelector('[data-composer-feedback]');
   const submitBtn = form.querySelector('.composer-submit');
+  const loadMoreBtn = document.querySelector('[data-load-more-btn]');
   const defaultEmptyText = 'No posts yet. Publish your first adventure.';
   let allPosts = [];
+  let currentPage = 1;
+  let isLastPage = false;
+  let isLoading = false;
 
-  hydratePosts(feedbackEl)
-    .then((posts) => {
+  hydratePosts(feedbackEl, 1)
+    .then(({ posts, meta }) => {
       allPosts = posts;
+      currentPage = 1;
+      isLastPage = meta.isLastPage ?? true;
       renderPosts(postsContainer, emptyState, allPosts, currentUser, defaultEmptyText);
+      if (loadMoreBtn) loadMoreBtn.hidden = isLastPage;
     })
     .catch((error) => {
       setFeedback(feedbackEl, error.message ?? 'Could not load posts.', 'error');
     });
 
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', async () => {
+      if (isLoading || isLastPage) return;
+      isLoading = true;
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.textContent = 'Loading…';
+      try {
+        const token = getToken();
+        if (!token) return;
+        const apiKey = await ensureApiKey(token);
+        const { posts: morePosts, meta } = await fetchAllPosts(token, apiKey, { page: currentPage + 1 });
+        currentPage += 1;
+        isLastPage = meta.isLastPage ?? true;
+        allPosts = [...allPosts, ...morePosts];
+        morePosts.forEach((post) => postsContainer.append(createPostCard(post, currentUser)));
+        updateEmptyState(postsContainer, emptyState);
+        loadMoreBtn.hidden = isLastPage;
+      } catch (err) {
+        setFeedback(feedbackEl, err.message ?? 'Could not load more posts.', 'error');
+      } finally {
+        isLoading = false;
+        loadMoreBtn.disabled = false;
+        loadMoreBtn.textContent = 'Load more';
+      }
+    });
+  }
+
   if (searchForm && searchInput) {
     searchForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      renderFilteredPosts(
-        postsContainer,
-        emptyState,
-        allPosts,
-        currentUser,
-        searchInput.value,
-        defaultEmptyText,
-      );
+      const query = searchInput.value;
+      renderFilteredPosts(postsContainer, emptyState, allPosts, currentUser, query, defaultEmptyText);
+      if (loadMoreBtn) loadMoreBtn.hidden = !!query.trim() || isLastPage;
+    });
+    searchInput.addEventListener('input', () => {
+      if (!searchInput.value.trim() && loadMoreBtn) loadMoreBtn.hidden = isLastPage;
     });
   }
 
@@ -108,16 +140,16 @@ export function initFeedPage() {
  * @param {HTMLElement|null} feedbackEl - optional element for error feedback
  * @returns {Promise<Array>} Array of posts
  */
-async function hydratePosts(feedbackEl) {
+async function hydratePosts(feedbackEl, page = 1) {
   const token = getToken();
-  if (!token) return [];
+  if (!token) return { posts: [], meta: {} };
 
   try {
     const apiKey = await ensureApiKey(token);
-    return await fetchAllPosts(token, apiKey);
+    return await fetchAllPosts(token, apiKey, { page });
   } catch (error) {
     setFeedback(feedbackEl, error.message ?? 'Could not load posts.', 'error');
-    return [];
+    return { posts: [], meta: {} };
   }
 }
 

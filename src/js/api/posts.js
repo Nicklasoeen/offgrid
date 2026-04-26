@@ -86,12 +86,13 @@ export async function fetchProfilePosts(profileName, accessToken, apiKey) {
  * @param {string} [query=''] optional text search query
  * @returns {Promise<Array>} array of post objects
  */
-export async function fetchAllPosts(accessToken, apiKey, query = '') {
+export async function fetchAllPosts(accessToken, apiKey, { query = '', page = 1, limit = 12 } = {}) {
   const params = new URLSearchParams({
     _author: 'true',
     sort: 'created',
     sortOrder: 'desc',
-    limit: '100',
+    limit: String(limit),
+    page: String(page),
   });
   if (query.trim()) params.set('q', query.trim());
 
@@ -107,7 +108,7 @@ export async function fetchAllPosts(accessToken, apiKey, query = '') {
     throw new Error(json.errors?.[0]?.message ?? `Could not load posts (HTTP ${res.status})`);
   }
 
-  return Array.isArray(json.data) ? json.data : [];
+  return { posts: Array.isArray(json.data) ? json.data : [], meta: json.meta ?? {} };
 }
 
 /**
@@ -234,9 +235,9 @@ export async function followProfile(profileName, accessToken, apiKey) {
  */
 export async function unfollowProfile(profileName, accessToken, apiKey) {
   const res = await authFetch(
-    `${API_BASE}/social/profiles/${encodeURIComponent(profileName)}/follow`,
+    `${API_BASE}/social/profiles/${encodeURIComponent(profileName)}/unfollow`,
     {
-      method: 'DELETE',
+      method: 'PUT',
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'X-Noroff-API-Key': apiKey,
