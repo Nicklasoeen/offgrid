@@ -162,7 +162,7 @@ function createPostCard(post, fallbackName) {
       </a>
     </div>
     <div class="post-counts">
-      <span>👍 ${reactions}</span>
+      <span>${reactions} likes</span>
       <span>${comments} comments</span>
     </div>
   `;
