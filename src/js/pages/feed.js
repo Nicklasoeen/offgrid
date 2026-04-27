@@ -230,7 +230,7 @@ function createPostCard(post, user) {
       </a>
     </div>
     <div class="post-counts">
-      <span>👍 ${reactions}</span>
+      <span>${reactions} likes</span>
       <span>${comments} comments</span>
     </div>
     <div class="post-action-bar">
