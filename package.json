@@ -4,11 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "concurrently \"vite\" \"sass --watch --no-source-map --load-path=node_modules src/styles/main.scss:src/styles/main.css --style=expanded\"",
+    "build:css": "sass --load-path=node_modules src/styles/main.scss:src/styles/main.css --style=compressed --no-source-map",
+    "build": "npm run build:css && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "concurrently": "^10.0.3",
+    "sass": "^1.100.0",
     "vite": "^7.1.9"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8"
   }
 }
