@@ -12872,7 +12872,7 @@ button.nav-item {
   font-size: 14px;
 }
 
-.stacked-form input {
+.stacked-form .form-control {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
@@ -12880,9 +12880,13 @@ button.nav-item {
   padding: 10px 12px;
 }
 
-.stacked-form input:focus {
-  outline: 2px solid var(--brand);
-  outline-offset: -2px;
+.stacked-form .form-control:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(47, 108, 80, 0.12);
+}
+
+.stacked-form .invalid-feedback {
+  font-size: 12px;
 }
 
 .button {

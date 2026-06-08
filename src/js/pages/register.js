@@ -11,6 +11,13 @@ export function initRegisterPage() {
     e.preventDefault();
     clearError(form);
 
+    if (!form.checkValidity()) {
+      form.classList.add('was-validated');
+      return;
+    }
+
+    form.classList.remove('was-validated');
+
     const { name, email, password } = Object.fromEntries(new FormData(form));
     submitBtn.disabled = true;
     submitBtn.textContent = 'Creating account…';

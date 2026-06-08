@@ -16,6 +16,13 @@ export function initLoginPage() {
     e.preventDefault();
     clearError(form);
 
+    if (!form.checkValidity()) {
+      form.classList.add('was-validated');
+      return;
+    }
+
+    form.classList.remove('was-validated');
+
     const { email, password } = Object.fromEntries(new FormData(form));
     submitBtn.disabled = true;
     submitBtn.textContent = 'Logging in…';
