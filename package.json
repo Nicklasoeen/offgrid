@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"vite\" \"sass --watch --no-source-map --load-path=node_modules src/styles/main.scss:src/styles/main.css --style=expanded\"",
-    "build:css": "sass --load-path=node_modules src/styles/main.scss:src/styles/main.css --style=compressed --no-source-map",
+    "build:css": "sass --load-path=node_modules src/styles/main.scss:src/styles/main.css --style=expanded --no-source-map",
     "build": "npm run build:css && vite build",
     "preview": "vite preview"
   },
