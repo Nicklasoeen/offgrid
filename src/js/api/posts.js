@@ -59,7 +59,7 @@ export async function createPost(post, accessToken, apiKey) {
  */
 export async function fetchProfilePosts(profileName, accessToken, apiKey) {
   const res = await authFetch(
-    `${API_BASE}/social/profiles/${encodeURIComponent(profileName)}/posts?_author=true&sort=created&sortOrder=desc`,
+    `${API_BASE}/social/profiles/${encodeURIComponent(profileName)}/posts?_author=true&_reactions=true&sort=created&sortOrder=desc`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -89,6 +89,7 @@ export async function fetchProfilePosts(profileName, accessToken, apiKey) {
 export async function fetchAllPosts(accessToken, apiKey, { query = '', page = 1, limit = 12 } = {}) {
   const params = new URLSearchParams({
     _author: 'true',
+    _reactions: 'true',
     sort: 'created',
     sortOrder: 'desc',
     limit: String(limit),
@@ -132,6 +133,64 @@ export async function fetchPostById(postId, accessToken, apiKey) {
   const json = await res.json();
   if (!res.ok) {
     throw new Error(json.errors?.[0]?.message ?? `Could not load post (HTTP ${res.status})`);
+  }
+
+  return json.data;
+}
+
+/**
+ * react to a post
+ * @param {string} postId
+ * @param {string} symbol
+ * @param {string} accessToken
+ * @param {string} apiKey
+ * @returns {Promise<object>}
+ */
+export async function reactToPost(postId, symbol, accessToken, apiKey) {
+  const res = await authFetch(
+    `${API_BASE}/social/posts/${encodeURIComponent(postId)}/react/${encodeURIComponent(symbol)}`,
+    {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    },
+  );
+
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.errors?.[0]?.message ?? `Could not react to post (HTTP ${res.status})`);
+  }
+
+  return json.data;
+}
+
+/**
+ * comment on a post
+ * @param {string} postId
+ * @param {{ body: string, replyToId?: number }} comment
+ * @param {string} accessToken
+ * @param {string} apiKey
+ * @returns {Promise<object>}
+ */
+export async function commentOnPost(postId, comment, accessToken, apiKey) {
+  const res = await authFetch(
+    `${API_BASE}/social/posts/${encodeURIComponent(postId)}/comment`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+      body: JSON.stringify(comment),
+    },
+  );
+
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.errors?.[0]?.message ?? `Could not comment on post (HTTP ${res.status})`);
   }
 
   return json.data;

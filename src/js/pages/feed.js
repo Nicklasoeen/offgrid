@@ -1,5 +1,5 @@
 import { createApiKey } from '../api/auth.js';
-import { createPost, fetchAllPosts } from '../api/posts.js';
+import { commentOnPost, createPost, fetchAllPosts, reactToPost } from '../api/posts.js';
 import { getApiKey, getToken, getUser, setApiKey } from '../utils/storage.js';
 
 export function initFeedPage() {
@@ -12,6 +12,12 @@ export function initFeedPage() {
   if (!form || !postsContainer || !emptyState) return;
 
   const currentUser = getUser();
+  const token = getToken();
+  if (!token) {
+    window.location.replace('./login.html');
+    return;
+  }
+
   if (currentUser?.name) {
     const initials = initialsFrom(currentUser.name);
     const navAvatar = document.querySelector('[data-nav-avatar]');
@@ -53,8 +59,6 @@ export function initFeedPage() {
       loadMoreBtn.disabled = true;
       loadMoreBtn.textContent = 'Loading…';
       try {
-        const token = getToken();
-        if (!token) return;
         const apiKey = await ensureApiKey(token);
         const { posts: morePosts, meta } = await fetchAllPosts(token, apiKey, { page: currentPage + 1 });
         currentPage += 1;
@@ -115,12 +119,6 @@ export function initFeedPage() {
 
     if (body.length < 3) {
       setFeedback(feedbackEl, 'Post text must be at least 3 characters.', 'error');
-      return;
-    }
-
-    const token = getToken();
-    if (!token) {
-      window.location.replace('./login.html');
       return;
     }
 
@@ -236,6 +234,27 @@ async function ensureApiKey(token) {
   return apiKey;
 }
 
+function getReactionState(post, currentUserName) {
+  const reactions = Array.isArray(post.reactions) ? post.reactions : [];
+  const thumbsUp = reactions.find((reaction) => reaction?.symbol === '👍');
+  const reactors = Array.isArray(thumbsUp?.reactors) ? thumbsUp.reactors : [];
+  return { isActive: Boolean(currentUserName && reactors.includes(currentUserName)) };
+}
+
+function getTotalReactionCount(reactions) {
+  if (!Array.isArray(reactions)) return 0;
+  return reactions.reduce((total, reaction) => total + Number(reaction?.count ?? 0), 0);
+}
+
+function setCardFeedback(element, message, kind) {
+  if (!element) return;
+  element.textContent = message;
+  element.hidden = !message;
+  element.classList.remove('is-error', 'is-success');
+  if (kind === 'error') element.classList.add('is-error');
+  if (kind === 'success') element.classList.add('is-success');
+}
+
 function setFeedback(element, message, kind) {
   if (!element) return;
   element.textContent = message;
@@ -252,6 +271,7 @@ function createPostCard(post, user) {
   const initials = initialsFrom(name);
   const reactions = Number(post._count?.reactions ?? 0);
   const comments = Number(post._count?.comments ?? 0);
+  const reactionState = getReactionState(post, user?.name);
   const createdText = post.created ? formatRelativeTime(post.created) : 'Just now';
 
   const card = document.createElement('article');
@@ -271,22 +291,21 @@ function createPostCard(post, user) {
         <p>${escapeHtml(post.body || '')}</p>
       </a>
     </div>
-    <div class="post-counts">
-      <span>${reactions} likes</span>
-      <span>${comments} comments</span>
-    </div>
     <div class="post-action-bar">
-      <button class="action-btn" type="button" aria-label="Like">
+      <button class="action-btn ${reactionState.isActive ? 'is-active' : ''}" type="button" data-post-like aria-pressed="${reactionState.isActive}" aria-label="Like post">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
         </svg>
+        <span class="action-count" data-post-reaction-count>${reactions}</span>
       </button>
-      <button class="action-btn" type="button" aria-label="Comment">
+      <button class="action-btn action-btn-secondary" type="button" data-post-comment aria-label="Comment on post">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" />
         </svg>
+        <span class="action-count" data-post-comment-count>${comments}</span>
       </button>
     </div>
+    <p class="post-feedback" data-post-feedback hidden></p>
   `;
 
   if (post.media?.url) {
@@ -296,7 +315,80 @@ function createPostCard(post, user) {
     card.querySelector('.post-text')?.insertAdjacentElement('afterend', media);
   }
 
+  wirePostActions(card, post, user);
+
   return card;
+}
+
+function wirePostActions(card, post, user) {
+  const postId = String(post.id ?? post._id ?? '');
+  const likeBtn = card.querySelector('[data-post-like]');
+  const commentBtn = card.querySelector('[data-post-comment]');
+  const reactionCountEl = card.querySelector('[data-post-reaction-count]');
+  const commentCountEl = card.querySelector('[data-post-comment-count]');
+  const feedbackEl = card.querySelector('[data-post-feedback]');
+
+  if (!postId || !likeBtn || !commentBtn || !reactionCountEl || !commentCountEl || !feedbackEl) {
+    return;
+  }
+
+  likeBtn.addEventListener('click', async () => {
+    setCardFeedback(feedbackEl, '', '');
+    likeBtn.disabled = true;
+
+    try {
+      const token = getToken();
+      if (!token) {
+        window.location.replace('./login.html');
+        return;
+      }
+
+      const apiKey = await ensureApiKey(token);
+      const result = await reactToPost(postId, '👍', token, apiKey);
+      post.reactions = result.reactions;
+      if (!post._count) post._count = { comments: 0, reactions: 0 };
+      post._count.reactions = getTotalReactionCount(result.reactions);
+
+      const nextState = getReactionState(post, user?.name);
+      likeBtn.classList.toggle('is-active', nextState.isActive);
+      likeBtn.setAttribute('aria-pressed', String(nextState.isActive));
+      reactionCountEl.textContent = String(post._count.reactions);
+      setCardFeedback(feedbackEl, nextState.isActive ? 'Saved your like.' : 'Like removed.', 'success');
+    } catch (error) {
+      setCardFeedback(feedbackEl, error.message ?? 'Could not update like.', 'error');
+    } finally {
+      likeBtn.disabled = false;
+    }
+  });
+
+  commentBtn.addEventListener('click', async () => {
+    setCardFeedback(feedbackEl, '', '');
+
+    const commentText = window.prompt('Write a comment');
+    const body = String(commentText ?? '').trim();
+    if (!body) return;
+
+    commentBtn.disabled = true;
+
+    try {
+      const token = getToken();
+      if (!token) {
+        window.location.replace('./login.html');
+        return;
+      }
+
+      const apiKey = await ensureApiKey(token);
+      await commentOnPost(postId, { body }, token, apiKey);
+      if (!post._count) post._count = { comments: 0, reactions: 0 };
+      post._count.comments = Number(post._count.comments ?? 0) + 1;
+      commentCountEl.textContent = String(post._count.comments);
+      setCardFeedback(feedbackEl, 'Comment added.', 'success');
+    } catch (error) {
+      setCardFeedback(feedbackEl, error.message ?? 'Could not add comment.', 'error');
+    } finally {
+      commentBtn.disabled = false;
+    }
+  });
 }
 
 function updateEmptyState(postsContainer, emptyState) {
