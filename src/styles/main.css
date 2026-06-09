@@ -12213,6 +12213,11 @@ button.nav-item {
   min-width: 0;
 }
 
+.feed-toolbar {
+  display: grid;
+  gap: 10px;
+}
+
 .feed-posts {
   display: grid;
   gap: 8px;
@@ -13033,7 +13038,7 @@ button.nav-item {
 .search-bar {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  width: 100%;
 }
 
 .search-input {
@@ -13074,6 +13079,29 @@ button.nav-item {
   height: 1.1rem;
   color: #fff;
   fill: currentColor;
+}
+
+.sort-control {
+  display: grid;
+  gap: 6px;
+}
+
+.sort-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.sort-select {
+  min-width: 100%;
+  border-color: var(--line);
+  border-radius: var(--radius);
+  background-color: var(--surface);
+}
+
+.sort-select:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(47, 108, 80, 0.12);
 }
 
 .edit-modal {

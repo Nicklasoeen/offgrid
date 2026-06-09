@@ -8,6 +8,7 @@ export function initFeedPage() {
   const emptyState = document.querySelector('[data-feed-empty]');
   const searchForm = document.querySelector('[data-search-form]');
   const searchInput = document.querySelector('[data-search-input]');
+  const sortSelect = document.querySelector('[data-sort-select]');
   if (!form || !postsContainer || !emptyState) return;
 
   const currentUser = getUser();
@@ -27,6 +28,7 @@ export function initFeedPage() {
   const submitBtn = form.querySelector('.composer-submit');
   const loadMoreBtn = document.querySelector('[data-load-more-btn]');
   const defaultEmptyText = 'No posts yet. Publish your first adventure.';
+  const currentSort = () => sortSelect?.value ?? 'newest';
   let allPosts = [];
   let currentPage = 1;
   let isLastPage = false;
@@ -37,7 +39,7 @@ export function initFeedPage() {
       allPosts = posts;
       currentPage = 1;
       isLastPage = meta.isLastPage ?? true;
-      renderPosts(postsContainer, emptyState, allPosts, currentUser, defaultEmptyText);
+      renderFeed(postsContainer, emptyState, allPosts, currentUser, defaultEmptyText, currentSort());
       if (loadMoreBtn) loadMoreBtn.hidden = isLastPage;
     })
     .catch((error) => {
@@ -58,8 +60,7 @@ export function initFeedPage() {
         currentPage += 1;
         isLastPage = meta.isLastPage ?? true;
         allPosts = [...allPosts, ...morePosts];
-        morePosts.forEach((post) => postsContainer.append(createPostCard(post, currentUser)));
-        updateEmptyState(postsContainer, emptyState);
+        renderFeed(postsContainer, emptyState, allPosts, currentUser, defaultEmptyText, currentSort(), searchInput?.value ?? '');
         loadMoreBtn.hidden = isLastPage;
       } catch (err) {
         setFeedback(feedbackEl, err.message ?? 'Could not load more posts.', 'error');
@@ -74,12 +75,33 @@ export function initFeedPage() {
   if (searchForm && searchInput) {
     searchForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const query = searchInput.value;
-      renderFilteredPosts(postsContainer, emptyState, allPosts, currentUser, query, defaultEmptyText);
-      if (loadMoreBtn) loadMoreBtn.hidden = !!query.trim() || isLastPage;
+      renderFeed(
+        postsContainer,
+        emptyState,
+        allPosts,
+        currentUser,
+        defaultEmptyText,
+        currentSort(),
+        searchInput.value,
+      );
+      if (loadMoreBtn) loadMoreBtn.hidden = !!searchInput.value.trim() || isLastPage;
     });
     searchInput.addEventListener('input', () => {
       if (!searchInput.value.trim() && loadMoreBtn) loadMoreBtn.hidden = isLastPage;
+    });
+  }
+
+  if (sortSelect) {
+    sortSelect.addEventListener('change', () => {
+      renderFeed(
+        postsContainer,
+        emptyState,
+        allPosts,
+        currentUser,
+        defaultEmptyText,
+        currentSort(),
+        searchInput?.value ?? '',
+      );
     });
   }
 
@@ -114,14 +136,14 @@ export function initFeedPage() {
 
       const createdPost = await createPost(payload, token, apiKey);
       allPosts.unshift(createdPost);
-      const queryValue = searchInput?.value ?? '';
-      renderFilteredPosts(
+      renderFeed(
         postsContainer,
         emptyState,
         allPosts,
         currentUser,
-        queryValue,
         defaultEmptyText,
+        currentSort(),
+        searchInput?.value ?? '',
       );
 
       form.reset();
@@ -153,14 +175,15 @@ async function hydratePosts(feedbackEl, page = 1) {
   }
 }
 
-function renderFilteredPosts(postsContainer, emptyState, allPosts, user, query, defaultEmptyText) {
+function renderFeed(postsContainer, emptyState, allPosts, user, defaultEmptyText, sortKey, query = '') {
   const filteredPosts = filterPosts(allPosts, query);
+  const sortedPosts = sortPosts(filteredPosts, sortKey);
   const activeQuery = String(query ?? '').trim();
   const emptyMessage = activeQuery
     ? `No posts matched "${activeQuery}".`
     : defaultEmptyText;
 
-  renderPosts(postsContainer, emptyState, filteredPosts, user, emptyMessage);
+  renderPosts(postsContainer, emptyState, sortedPosts, user, emptyMessage);
 }
 
 function renderPosts(postsContainer, emptyState, posts, user, emptyMessage) {
@@ -183,6 +206,25 @@ function filterPosts(posts, query) {
     const author = String(post.author?.name ?? '').toLowerCase();
     return body.includes(searchTerm) || title.includes(searchTerm) || author.includes(searchTerm);
   });
+}
+
+function sortPosts(posts, sortKey) {
+  const sorted = [...posts];
+  const byDate = (a, b) => new Date(a.created ?? 0).getTime() - new Date(b.created ?? 0).getTime();
+  const byLikes = (a, b) => Number(a._count?.reactions ?? 0) - Number(b._count?.reactions ?? 0);
+  const byComments = (a, b) => Number(a._count?.comments ?? 0) - Number(b._count?.comments ?? 0);
+
+  switch (sortKey) {
+    case 'oldest':
+      return sorted.sort(byDate);
+    case 'likes':
+      return sorted.sort(byLikes).reverse();
+    case 'comments':
+      return sorted.sort(byComments).reverse();
+    case 'newest':
+    default:
+      return sorted.sort(byDate).reverse();
+  }
 }
 
 async function ensureApiKey(token) {
