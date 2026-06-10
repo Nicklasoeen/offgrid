@@ -1,5 +1,5 @@
 import { createApiKey } from '../api/auth.js';
-import { commentOnPost, createPost, fetchAllPosts, reactToPost } from '../api/posts.js';
+import { createPost, fetchAllPosts, reactToPost } from '../api/posts.js';
 import { getApiKey, getToken, getUser, setApiKey } from '../utils/storage.js';
 
 export function initFeedPage() {
@@ -362,32 +362,7 @@ function wirePostActions(card, post, user) {
   });
 
   commentBtn.addEventListener('click', async () => {
-    setCardFeedback(feedbackEl, '', '');
-
-    const commentText = window.prompt('Write a comment');
-    const body = String(commentText ?? '').trim();
-    if (!body) return;
-
-    commentBtn.disabled = true;
-
-    try {
-      const token = getToken();
-      if (!token) {
-        window.location.replace('./login.html');
-        return;
-      }
-
-      const apiKey = await ensureApiKey(token);
-      await commentOnPost(postId, { body }, token, apiKey);
-      if (!post._count) post._count = { comments: 0, reactions: 0 };
-      post._count.comments = Number(post._count.comments ?? 0) + 1;
-      commentCountEl.textContent = String(post._count.comments);
-      setCardFeedback(feedbackEl, 'Comment added.', 'success');
-    } catch (error) {
-      setCardFeedback(feedbackEl, error.message ?? 'Could not add comment.', 'error');
-    } finally {
-      commentBtn.disabled = false;
-    }
+    window.location.assign(`./post.html?id=${encodeURIComponent(postId)}#comment-form`);
   });
 }
 

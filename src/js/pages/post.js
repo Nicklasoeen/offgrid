@@ -1,5 +1,5 @@
 import { createApiKey } from '../api/auth.js';
-import { deletePost, fetchPostById, updatePost } from '../api/posts.js';
+import { commentOnPost, deletePost, fetchPostById, updatePost } from '../api/posts.js';
 import { getApiKey, getToken, getUser, setApiKey } from '../utils/storage.js';
 
 let postState = { post: null, user: null, token: null, apiKey: null, container: null };
@@ -35,10 +35,15 @@ export async function initPostPage() {
 
     container.innerHTML = '';
     container.append(createPostCard(post, user));
+    wireCommentForm(container, post);
     empty.hidden = true;
 
     const authorName = post.author?.name ? ` by ${post.author.name}` : '';
     document.title = `Offgrid | Post${authorName}`;
+
+    if (window.location.hash === '#comment-form') {
+      document.getElementById('comment-form')?.focus();
+    }
   } catch (error) {
     showEmpty(empty, error.message ?? 'Could not load this post.');
   }
@@ -194,6 +199,51 @@ async function handleDeletePost(postId) {
   }
 }
 
+function wireCommentForm(container, post) {
+  const form = container.querySelector('[data-comment-form]');
+  const input = container.querySelector('[data-comment-input]');
+  const feedback = container.querySelector('[data-comment-feedback]');
+  const list = container.querySelector('[data-comment-list]');
+  const empty = container.querySelector('[data-comment-empty]');
+  const count = container.querySelector('[data-comment-total]');
+  const submitBtn = container.querySelector('[data-comment-submit]');
+
+  if (!form || !input || !feedback || !list || !empty || !count || !submitBtn) return;
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    showFeedback(feedback, '', '');
+
+    const body = input.value.trim();
+    if (body.length < 1) {
+      showFeedback(feedback, 'Write a comment before posting.', 'error');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Posting...';
+
+    try {
+      const createdComment = await commentOnPost(post.id, { body }, postState.token, postState.apiKey);
+      const normalizedComment = normalizeComment(createdComment, postState.user);
+
+      post.comments = [normalizedComment, ...(Array.isArray(post.comments) ? post.comments : [])];
+      if (!post._count) post._count = { comments: 0, reactions: 0 };
+      post._count.comments = Number(post._count.comments ?? 0) + 1;
+
+      renderComments(list, empty, count, post.comments);
+      form.reset();
+      showFeedback(feedback, 'Comment added.', 'success');
+      input.focus();
+    } catch (error) {
+      showFeedback(feedback, error.message ?? 'Could not add comment.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Post comment';
+    }
+  });
+}
+
 function createPostCard(post, user) {
   const name = post.author?.name || 'Explorer';
   const isOwnPost = user?.name === post.author?.name;
@@ -221,6 +271,32 @@ function createPostCard(post, user) {
       <span>👍 ${reactions}</span>
       <span>${comments} comments</span>
     </div>
+    <section class="post-comments-section" aria-labelledby="post-comments-heading">
+      <div class="post-comments-header">
+        <h2 id="post-comments-heading">Comments</h2>
+        <span class="post-comments-total" data-comment-total>${comments}</span>
+      </div>
+      <form class="post-comment-form" data-comment-form>
+        <label class="visually-hidden" for="comment-form">Write a comment</label>
+        <textarea
+          class="form-control post-comment-input"
+          id="comment-form"
+          name="body"
+          placeholder="Write a comment..."
+          maxlength="280"
+          required
+          data-comment-input
+        ></textarea>
+        <div class="post-comment-actions">
+          <p class="post-feedback post-comment-feedback" data-comment-feedback hidden></p>
+          <button class="composer-btn composer-submit post-comment-submit" type="submit" data-comment-submit>
+            Post comment
+          </button>
+        </div>
+      </form>
+      <p class="post-comments-empty" data-comment-empty hidden>No comments yet. Start the conversation.</p>
+      <div class="post-comment-list" data-comment-list></div>
+    </section>
     ${
       isOwnPost
         ? `
@@ -252,11 +328,70 @@ function createPostCard(post, user) {
     card.querySelector('.post-text')?.insertAdjacentElement('afterend', media);
   }
 
+  renderComments(
+    card.querySelector('[data-comment-list]'),
+    card.querySelector('[data-comment-empty]'),
+    card.querySelector('[data-comment-total]'),
+    post.comments,
+  );
+
   if (isOwnPost) {
     wireOwnerMenu(card, post);
   }
 
   return card;
+}
+
+function renderComments(listElement, emptyElement, countElement, comments) {
+  if (!listElement || !emptyElement || !countElement) return;
+
+  const items = Array.isArray(comments) ? comments : [];
+  listElement.innerHTML = '';
+
+  items.forEach((comment) => {
+    const item = document.createElement('article');
+    item.className = 'post-comment-item';
+
+    const authorName = getCommentAuthorName(comment);
+    const body = String(comment?.body ?? '').trim();
+    const createdText = comment?.created ? formatRelativeTime(comment.created) : 'Just now';
+
+    item.innerHTML = `
+      <div class="post-comment-avatar">${escapeHtml(initialsFrom(authorName))}</div>
+      <div class="post-comment-body">
+        <div class="post-comment-meta">
+          <strong>${escapeHtml(authorName)}</strong>
+          <span>${escapeHtml(createdText)}</span>
+        </div>
+        <p>${escapeHtml(body)}</p>
+      </div>
+    `;
+
+    listElement.append(item);
+  });
+
+  countElement.textContent = String(items.length);
+  emptyElement.hidden = items.length > 0;
+}
+
+function normalizeComment(comment, fallbackUser) {
+  if (!comment || typeof comment !== 'object') {
+    return { body: '', created: new Date().toISOString(), owner: { name: fallbackUser?.name || 'You' } };
+  }
+
+  if (comment.owner?.name || comment.author?.name) {
+    return comment;
+  }
+
+  return {
+    ...comment,
+    owner: { name: fallbackUser?.name || 'You' },
+    created: comment.created ?? new Date().toISOString(),
+  };
+}
+
+function getCommentAuthorName(comment) {
+  return comment?.owner?.name || comment?.author?.name || 'Explorer';
 }
 
 function initialsFrom(name) {
