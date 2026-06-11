@@ -1,74 +1,91 @@
 # Offgrid
 
-Offgrid is a front-end social media app built for the Noroff Social Media API assignment.
+Offgrid is a front-end social media app built for the Noroff JS2 course assignment.
 
-The app lets users register, log in, browse posts, create their own posts, edit/delete their own content, and follow/unfollow other profiles.
+The app includes authentication, feed browsing, post interactions, profile views, and follow functionality using the Noroff Social API v2.
+
+## CSS Frameworks Assignment (Bootstrap + Sass)
+
+This submission is styled with Bootstrap and Sass installed via npm (no CDN).
+
+### Assignment checklist
+
+- Style at least 3 pages: completed
+- At least one page with a form and HTML validation: completed
+- Use npm packages for framework (not CDN): completed
+- package.json includes development and production scripts, with --watch in development: completed
+- Work on branch named css-frameworks: completed
 
 ## Tech stack
 
 - JavaScript (ES6 modules)
 - HTML
-- CSS
+- Bootstrap 5
+- Sass
 - Vite
 - Noroff Social API v2
+
+## Implemented pages
+
+- login.html
+- register.html
+- index.html (feed)
+- post.html (single post)
+- profile.html
 
 ## Features
 
 - Register a new user
 - Log in as an existing user
 - View all posts in a feed
-- Search posts in the feed
+- Search and sort posts in the feed
 - Open a single post page
 - Create a post
-- Edit your own post
-- Delete your own post
-- View your own profile
-- View other user profiles and their posts
-- Follow / unfollow users
+- React to posts
+- Comment on posts
+- Edit and delete own post
+- View own and other profiles
+- Follow and unfollow profiles
+
+## Bootstrap and Sass setup
+
+- Bootstrap is installed as a dependency in package.json
+- Bootstrap Sass is imported in src/styles/main.scss
+- Compiled CSS output is written to src/styles/main.css
+
+## Scripts
+
+- npm run dev: starts Vite and Sass in watch mode
+- npm run build: compiles Sass and builds Vite production bundle
+- npm run preview: previews the production build
 
 ## Getting started
 
-### 1) Install dependencies
+1. Install dependencies:
 
-```bash
-npm install
-```
+	npm install
 
-### 2) Run locally
+2. Run development mode:
 
-```bash
-npm run dev
-```
+	npm run dev
 
-### 3) Build for production
+3. Build for production:
 
-```bash
-npm run build
-```
+	npm run build
 
-### 4) Preview production build
+4. Preview production build:
 
-```bash
-npm run preview
-```
-
-## Project pages
-
-- `login.html`
-- `register.html`
-- `index.html` (feed)
-- `post.html` (single post)
-- `profile.html` (user profile)
+	npm run preview
 
 ## API notes
 
-This project uses authenticated Noroff endpoints.
+Authenticated Noroff endpoints used:
 
-- Auth: register/login + API key creation
-- Posts: fetch/create/update/delete
-- Profiles: fetch profile, fetch profile posts, follow/unfollow
+- Auth: register, login, API key creation
+- Posts: fetch, create, update, delete, react, comment
+- Profiles: fetch profile, fetch profile posts, follow, unfollow
 
-Session data is stored in `localStorage` (token, user, API key).
+Session data is stored in localStorage (token, user, API key).
 
 ## Deployment
 
