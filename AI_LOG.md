@@ -26,3 +26,13 @@ Tool used: ChatGPT
 Date: 9 April 2026
 Purpose: Testing approach (manual test checklist for login, create, edit, delete, and search flows)
 Outcome: verification before final submission
+
+Tool used: ChatGPT
+Date: 7 May 2026
+Purpose: Clarification on migrating from regular CSS to Bootstrap classes with Sass while keeping existing custom styling structure
+Outcome: clearer migration strategy and safer step-by-step implementation done independently
+
+Tool used: ChatGPT
+Date: 9 June 2026
+Purpose: Guidance on configuring npm scripts for Sass watch in development and Sass + Vite for production builds
+Outcome: better understanding of the build workflow and stronger verification before submission
