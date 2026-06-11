@@ -79,14 +79,25 @@
           <form class="composer-form" data-create-post-form>
             <div class="composer-row">
               <div class="avatar-md" data-composer-avatar>OG</div>
-              <textarea
-                class="composer-input composer-textarea"
-                name="body"
-                placeholder="Log your latest adventure..."
-                minlength="3"
-                maxlength="280"
-                required
-              ></textarea>
+              <div class="composer-fields">
+                <input
+                  class="composer-input composer-title-input"
+                  type="text"
+                  name="title"
+                  placeholder="Title your adventure"
+                  minlength="3"
+                  maxlength="80"
+                  required
+                />
+                <textarea
+                  class="composer-input composer-textarea"
+                  name="body"
+                  placeholder="Log your latest adventure..."
+                  minlength="3"
+                  maxlength="280"
+                  required
+                ></textarea>
+              </div>
             </div>
 
             <div class="composer-media-row">

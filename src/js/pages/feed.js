@@ -114,8 +114,14 @@ export function initFeedPage() {
     setFeedback(feedbackEl, '', '');
 
     const formData = new FormData(form);
+    const title = String(formData.get('title') ?? '').trim();
     const body = String(formData.get('body') ?? '').trim();
     const mediaUrl = String(formData.get('mediaUrl') ?? '').trim();
+
+    if (title.length < 3) {
+      setFeedback(feedbackEl, 'Post title must be at least 3 characters.', 'error');
+      return;
+    }
 
     if (body.length < 3) {
       setFeedback(feedbackEl, 'Post text must be at least 3 characters.', 'error');
@@ -128,7 +134,6 @@ export function initFeedPage() {
     try {
       const apiKey = await ensureApiKey(token);
 
-      const title = body.slice(0, 50);
       const payload = { title, body };
       if (mediaUrl) payload.media = { url: mediaUrl, alt: title };
 
@@ -268,6 +273,7 @@ function createPostCard(post, user) {
   const postId = String(post.id ?? post._id ?? '');
   const postUrl = postId ? `./post.html?id=${encodeURIComponent(postId)}` : './index.html';
   const name = post.author?.name || user?.name || 'You';
+  const title = String(post.title ?? '').trim() || 'Untitled adventure';
   const initials = initialsFrom(name);
   const reactions = Number(post._count?.reactions ?? 0);
   const comments = Number(post._count?.comments ?? 0);
@@ -288,6 +294,7 @@ function createPostCard(post, user) {
     </div>
     <div class="post-text">
       <a href="${postUrl}" class="post-open-link" aria-label="Open post by ${escapeAttr(name)}">
+        <h3 class="post-title">${escapeHtml(title)}</h3>
         <p>${escapeHtml(post.body || '')}</p>
       </a>
     </div>

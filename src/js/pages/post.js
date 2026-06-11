@@ -67,22 +67,50 @@ async function showEditForm(post, card) {
   const dialog = document.createElement('div');
   dialog.className = 'edit-modal';
   dialog.innerHTML = `
-    <div class="edit-modal-content">
-      <h2>Edit Post</h2>
+    <div class="edit-modal-content" role="dialog" aria-modal="true" aria-labelledby="edit-post-title">
+      <div class="edit-modal-header">
+        <div>
+          <p class="edit-modal-kicker">Post editor</p>
+          <h2 id="edit-post-title">Edit post</h2>
+        </div>
+        <button type="button" class="btn-edit-close" aria-label="Close edit dialog">x</button>
+      </div>
       <form class="edit-form">
-        <textarea
-          name="body"
-          placeholder="Post content..."
-          minlength="3"
-          maxlength="280"
-          required
-        >${escapeHtml(post.body || '')}</textarea>
-        <input
-          type="url"
-          name="mediaUrl"
-          placeholder="Optional photo URL"
-          value="${escapeAttr(post.media?.url || '')}"
-        />
+        <label class="edit-field">
+          <span class="edit-field-label">Title</span>
+          <input
+            id="edit-post-title-input"
+            class="edit-input"
+            type="text"
+            name="title"
+            placeholder="Post title"
+            minlength="3"
+            maxlength="80"
+            required
+            value="${escapeAttr(post.title || '')}"
+          />
+        </label>
+        <label class="edit-field">
+          <span class="edit-field-label">Body</span>
+          <textarea
+            class="edit-input edit-textarea"
+            name="body"
+            placeholder="Post content..."
+            minlength="3"
+            maxlength="280"
+            required
+          >${escapeHtml(post.body || '')}</textarea>
+        </label>
+        <label class="edit-field">
+          <span class="edit-field-label">Photo URL (optional)</span>
+          <input
+            class="edit-input"
+            type="url"
+            name="mediaUrl"
+            placeholder="https://..."
+            value="${escapeAttr(post.media?.url || '')}"
+          />
+        </label>
         <p class="edit-feedback" hidden></p>
         <div class="edit-actions">
           <button type="button" class="btn-cancel">Cancel</button>
@@ -97,11 +125,21 @@ async function showEditForm(post, card) {
   const form = dialog.querySelector('.edit-form');
   const feedback = dialog.querySelector('.edit-feedback');
   const cancelBtn = dialog.querySelector('.btn-cancel');
+  const closeBtn = dialog.querySelector('.btn-edit-close');
   const saveBtn = dialog.querySelector('.btn-save');
 
-  cancelBtn.addEventListener('click', () => {
-    dialog.remove();
+  const closeDialog = () => dialog.remove();
+
+  cancelBtn.addEventListener('click', closeDialog);
+  closeBtn?.addEventListener('click', closeDialog);
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) closeDialog();
   });
+  dialog.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeDialog();
+  });
+
+  dialog.querySelector('#edit-post-title-input')?.focus();
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -109,8 +147,15 @@ async function showEditForm(post, card) {
     feedback.hidden = true;
 
     const formData = new FormData(form);
+    const title = String(formData.get('title') ?? '').trim();
     const body = String(formData.get('body') ?? '').trim();
     const mediaUrl = String(formData.get('mediaUrl') ?? '').trim();
+
+    if (title.length < 3) {
+      showFeedback(feedback, 'Title must be at least 3 characters.', 'error');
+      saveBtn.disabled = false;
+      return;
+    }
 
     if (body.length < 3) {
       showFeedback(feedback, 'Post must be at least 3 characters.', 'error');
@@ -119,7 +164,6 @@ async function showEditForm(post, card) {
     }
 
     try {
-      const title = body.slice(0, 50);
       const updates = { title, body };
       if (mediaUrl) updates.media = { url: mediaUrl, alt: title };
 
@@ -247,6 +291,7 @@ function wireCommentForm(container, post) {
 function createPostCard(post, user) {
   const name = post.author?.name || 'Explorer';
   const isOwnPost = user?.name === post.author?.name;
+  const title = String(post.title ?? '').trim() || 'Untitled adventure';
   const initials = initialsFrom(name);
   const reactions = Number(post._count?.reactions ?? 0);
   const comments = Number(post._count?.comments ?? 0);
@@ -265,6 +310,7 @@ function createPostCard(post, user) {
       </div>
     </div>
     <div class="post-text">
+      <h3 class="post-title">${escapeHtml(title)}</h3>
       <p>${escapeHtml(post.body || '')}</p>
     </div>
     <div class="post-counts">

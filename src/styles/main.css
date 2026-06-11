@@ -11914,6 +11914,19 @@ input {
   color: inherit;
 }
 
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=password]:focus,
+input[type=url]:focus,
+input[type=search]:focus,
+textarea:focus {
+  outline: none;
+}
+
+.form-control:focus {
+  box-shadow: none;
+}
+
 img {
   display: block;
   max-width: 100%;
@@ -12248,8 +12261,14 @@ button.nav-item {
 
 .composer-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
+}
+
+.composer-fields {
+  flex: 1;
+  display: grid;
+  gap: 8px;
 }
 
 .avatar-md {
@@ -12279,6 +12298,10 @@ button.nav-item {
   max-height: 160px;
   resize: vertical;
   line-height: 1.45;
+  cursor: text;
+}
+
+.composer-title-input {
   cursor: text;
 }
 
@@ -12431,6 +12454,13 @@ button.nav-item {
   line-height: 1.5;
 }
 
+.post-title {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
 .post-open-link {
   display: block;
   color: inherit;
@@ -12525,6 +12555,10 @@ button.nav-item {
 .post-comment-input {
   min-height: 96px;
   resize: vertical;
+}
+
+.post-comment-input:focus {
+  border-color: var(--line);
 }
 
 .post-comment-actions {
@@ -13260,7 +13294,9 @@ button.nav-item {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  background: rgba(8, 10, 10, 0.52);
+  backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13274,15 +13310,92 @@ button.nav-item {
 .edit-modal-content {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 2rem;
-  width: 90%;
-  max-width: 600px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  padding: 18px;
+  width: min(640px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.2);
 }
 
-.edit-form textarea {
+.edit-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.edit-modal-kicker {
+  margin: 0 0 3px;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.edit-modal-header h2, .edit-modal-header .h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.btn-edit-close {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-grid;
+  place-items: center;
+}
+
+.btn-edit-close:hover {
+  color: var(--brand-dark);
+  border-color: var(--brand);
+  background: var(--brand-light);
+}
+
+.edit-form {
+  display: grid;
+  gap: 12px;
+}
+
+.edit-field {
+  display: grid;
+  gap: 6px;
+}
+
+.edit-field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.edit-input {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(47, 108, 80, 0.12);
+}
+
+.edit-textarea {
   min-height: 120px;
+  resize: vertical;
 }
 
 .edit-actions {
@@ -13304,30 +13417,36 @@ button.nav-item {
 
 .btn-cancel,
 .btn-save {
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: var(--radius);
-  font-size: 0.95rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 0.9rem;
   font-weight: 600;
-  transition: opacity 0.15s, background 0.15s;
+  transition: color 0.15s, background 0.15s, border-color 0.15s, transform 0.1s;
 }
 
 .btn-cancel {
-  background: var(--border-color);
-  color: var(--text-primary);
+  background: #fff;
+  border-color: var(--border-color);
+  color: var(--text-secondary);
 }
 
 .btn-cancel:hover {
-  opacity: 0.8;
+  color: var(--brand-dark);
+  border-color: var(--brand);
+  background: var(--brand-light);
 }
 
 .btn-save {
   background: var(--brand);
+  border-color: var(--brand);
   color: #fff;
 }
 
 .btn-save:hover {
-  opacity: 0.9;
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+  transform: translateY(-1px);
 }
 
 .btn-save:disabled {

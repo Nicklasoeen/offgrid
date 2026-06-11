@@ -139,6 +139,7 @@ function createPostCard(post, fallbackName) {
   const postId = String(post.id ?? post._id ?? '');
   const postUrl = postId ? `./post.html?id=${encodeURIComponent(postId)}` : './profile.html';
   const name = post.author?.name || fallbackName || 'You';
+  const title = String(post.title ?? '').trim() || 'Untitled adventure';
   const initials = initialsFrom(name);
   const reactions = Number(post._count?.reactions ?? 0);
   const comments = Number(post._count?.comments ?? 0);
@@ -158,6 +159,7 @@ function createPostCard(post, fallbackName) {
     </div>
     <div class="post-text">
       <a href="${postUrl}" class="post-open-link" aria-label="Open post by ${escapeAttr(name)}">
+        <h3 class="post-title">${escapeHtml(title)}</h3>
         <p>${escapeHtml(post.body || '')}</p>
       </a>
     </div>
