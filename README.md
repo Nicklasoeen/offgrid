@@ -94,3 +94,7 @@ Deployed app: https://nicklasoeen.github.io/offgrid/
 ## Author
 
 - Nicklas Øen
+
+## Submission note
+
+This commit is added on the css-frameworks branch to provide a branch-to-main PR link for submission.
